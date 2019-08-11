@@ -1,14 +1,10 @@
 # Не доделано:
 
-- База данных работает отдельно от основного клиента.
-- Модели должны автоматически читаться из директории как и команды и ивенты.
 - Команда `help` должна быть изначально.
 - `Event.unload()`.
 - `Event.reload()`.
 - `Command.unload()`.
 - `Command.reload()`.
-- Кулдаун для команд.
-- Permissions Level для команд.
 - И еще много всего.
 
 ## Examples
@@ -44,7 +40,7 @@ new Core({
   splitArgs: ' ',
   cmdsIn: ['text'],
   ignoreCase: true,
-  cmdLowerCase: true,
+  permissionLevels: new PermissionLevels(),
 });
 ```
 
@@ -145,6 +141,38 @@ module.exports = class extends Command {
 - `reload()`
 - `toString()`
 
+#### Permission Levels
+
+Their structure:
+
+```js
+const { Core, PermissionLevels } = require('discore.js');
+const config = require('./config');
+
+const permLevels = new PermissionLevels();
+permLevels
+  .add(0, true, msg => msg.author.id === '1') // Throws error.
+  // Permissions Level 1 is true only if message author id is '1'
+  .add(1, false, msg => msg.author.id === '1')
+  // Same as previus example
+  .addLevel(2, false, msg => msg.author.id === '1');
+
+// Test for a role.
+permLevels.add(3, true, msg => msg.member.roles.has('roleid'));
+
+// Testing. Returns boolean.
+permLevels.test(3, msg);
+
+new Core(config);
+```
+
+##### Methods:
+
+- `addLevel()`
+- `add()`
+- `test()`
+- `length`
+
 #### Database
 
 DB's structure (options argument defined with default configuration):
@@ -179,7 +207,7 @@ const data = {
 };
 
 // Model name can not contain spaces in it
-db.addModel('model_name', data);
+db.addModel('modelName', data);
 ```
 
 ##### Methods:
@@ -194,12 +222,12 @@ db.addModel('model_name', data);
 
 ```js
 // Working with model from previus example.
-// You can use `db['model_name']`
+// You can use `db['Modelname']`
 
 // Searches for document with `id` of '123'.
-let res1 = db.model_name.hasOne({ id: '123' });
-let res2 = db.model_name.hasOne('id', '123'); // Same.
-let res3 = db.model_name.hasOne(val => val.id === '123'); // Same.
+let res1 = db.Modelname.hasOne({ id: '123' });
+let res2 = db.Modelname.hasOne('id', '123'); // Same.
+let res3 = db.Modelname.hasOne(val => val.id === '123'); // Same.
 
 console.log(typeof res); // Returns true or false (Boolean).
 console.log(typeof res2); // Same.
@@ -210,10 +238,12 @@ console.log(typeof res3); // Same.
 
 ```js
 // Working with model from previus example.
-// You can use `db['model_name']`
-let res1 = db.model_name.findOne({ id: '123' }); // Searches for document with `id` of '123'.
-let res2 = db.model_name.findOne('id', '123'); // Same.
-let res3 = db.model_name.findOne(val => val.id === '123'); // Same.
+// You can use `db['Modelname']` or `db.Modelname`
+
+// Searches for document with `id` of '123'.
+let res1 = db.Modelname.findOne({ id: '123' });
+let res2 = db.Modelname.findOne('id', '123'); // Same.
+let res3 = db.Modelname.findOne(val => val.id === '123'); // Same.
 
 /*
   Returns document. If there is no document
@@ -232,7 +262,7 @@ console.log(typeof res3); // Same.
 
 ```js
 // **upsertOne() method is recommended to use!**
-db.model_name.insertOne({
+db.Modelname.insertOne({
   id: '3213',
   messageCount: 1, // If not defined, going to be 0.
 });
@@ -247,9 +277,9 @@ db.model_name.insertOne({
   All of these examples are going to search
   for `id` of '3213' and update 
 */
-db.model_name.updateOne({ id: '3213' }, { messageCount: 2 });
-db.model_name.updateOne('id', '3212', { messageCount: 2 });
-db.model_name.updateOne(val => val.id === '3212', { messageCount: 2 });
+db.Modelname.updateOne({ id: '3213' }, { messageCount: 2 });
+db.Modelname.updateOne('id', '3212', { messageCount: 2 });
+db.Modelname.updateOne(val => val.id === '3212', { messageCount: 2 });
 ```
 
 ###### upsertOne()
@@ -264,7 +294,7 @@ db.model_name.updateOne(val => val.id === '3212', { messageCount: 2 });
 // All of these examples are going to search
 // for `id` of '3213' and update
 // messageCount to 2.
-db.model_name.upsertOne({ id: '3213' }, { messageCount: 2 });
-db.model_name.upsertOne('id', '3212', { messageCount: 2 });
-db.model_name.upsertOne(val => val.id === '3212', { messageCount: 2 });
+db.Modelname.upsertOne({ id: '3213' }, { messageCount: 2 });
+db.Modelname.upsertOne('id', '3212', { messageCount: 2 });
+db.Modelname.upsertOne(val => val.id === '3212', { messageCount: 2 });
 ```

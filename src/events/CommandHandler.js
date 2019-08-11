@@ -7,9 +7,10 @@ module.exports = class extends Event {
     };
   }
 
-  run(message) {
+  async run(message) {
     if (!message) return;
     if (!message.channel) return;
+    if (!message.author) return;
     const { cmdsIn, ignoreCase, prefix, splitArgs, cmdLowerCase } = this.client;
     if (!cmdsIn.includes(message.channel.type)) return;
     let { content } = message;
@@ -29,6 +30,13 @@ module.exports = class extends Event {
     const filter = e => e.key === cmd || e.aliases.includes(cmd);
     const command = this.client.commands.find(filter);
     if (!command) return;
+    const permTest = await this.client.permLevels.test(
+      command.permLevel,
+      message
+    );
+    if (!permTest) return;
+    if (command.cooldowns.get(message.author.id) > Date.now()) return;
+    command.cooldowns.set(message.author.id, Date.now() + command.cooldown);
     command._run(message, args);
   }
 };

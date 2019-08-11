@@ -1,6 +1,7 @@
 const { Client } = require('discord.js');
 const path = require('path');
 const Store = require('./Store');
+const PermissionLevels = require('./PermissionLevels');
 const UniqueId = require('../util/UniqueId');
 
 const defaultOptions = {
@@ -13,6 +14,7 @@ const defaultOptions = {
   cmdsIn: ['text'],
   ignoreCase: true,
   cmdLowerCase: true,
+  permLevels: new PermissionLevels(),
 };
 
 module.exports = class extends Client {
@@ -28,6 +30,7 @@ module.exports = class extends Client {
       cmdsIn: options.cmdsIn,
       ignoreCase: options.ignoreCase,
       cmdLowerCase: options.cmdLowerCase,
+      permLevels: options.permLevels,
     };
     delete options.typing;
     delete options.eventsFolder;
@@ -74,6 +77,7 @@ module.exports = class extends Client {
     this.splitArgs = thisOptions.splitArgs;
     this.cmdsIn = thisOptions.cmdsIn;
     this.ignoreCase = thisOptions.ignoreCase;
+    this.permLevels = thisOptions.permLevels;
     this.cmdLowerCase = thisOptions.cmdLowerCase;
     this.uniqid = new UniqueId();
 
