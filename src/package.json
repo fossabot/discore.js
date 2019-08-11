@@ -1,0 +1,13 @@
+{
+  "name": "discore.js",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {},
+  "author": "Zargovv (Max Zargov)",
+  "license": "MIT",
+  "dependencies": {
+    "discord.js": "^11.5.1",
+    "mongoose": "^5.6.9"
+  }
+}
