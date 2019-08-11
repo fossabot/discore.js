@@ -28,7 +28,6 @@ module.exports = class Base {
         .slice(0, -1)
         .join('.');
     this.name = this.key;
-    this._init();
   }
 
   toggle() {

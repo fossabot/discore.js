@@ -72,7 +72,11 @@ module.exports = class Model {
     }
     if (!this.hasOne(query)) return null;
     const data = this.findOne(query);
-    this.collection.set(data._id, { ...this._defaults, ...data, ...dataOrValue });
+    this.collection.set(data._id, {
+      ...this._defaults,
+      ...data,
+      ...dataOrValue,
+    });
     this._Model.updateOne({ _id: data._id }, { $set: dataOrValue });
     return true;
   }
