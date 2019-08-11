@@ -264,7 +264,7 @@ db.model_name.updateOne(val => val.id === '3212', { messageCount: 2 });
 // All of these examples are going to search
 // for `id` of '3213' and update
 // messageCount to 2.
-db.model_name.updateOne({ id: '3213' }, { messageCount: 2 });
-db.model_name.updateOne('id', '3212', { messageCount: 2 });
-db.model_name.updateOne(val => val.id === '3212', { messageCount: 2 });
+db.model_name.upsertOne({ id: '3213' }, { messageCount: 2 });
+db.model_name.upsertOne('id', '3212', { messageCount: 2 });
+db.model_name.upsertOne(val => val.id === '3212', { messageCount: 2 });
 ```
