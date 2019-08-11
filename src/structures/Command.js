@@ -10,7 +10,12 @@ const defaultOptions = {
 
 module.exports = class Command extends Base {
   constructor(client, fullpath, options = {}) {
-    options = { ...defaultOptions, ...options };
+    const childOptions = this.settings || this.options || {};
+    if (typeof childOptions !== 'object') {
+      const err = 'Options must return an object.';
+      this.client.emit('error', err);
+    }
+    options = { ...defaultOptions, ...childOptions, ...options };
     const thisOptions = {
       cooldown: options.cooldown,
       permLevel: options.permLevel,

@@ -8,12 +8,7 @@ const defaultOptions = {
 
 module.exports = class Base {
   constructor(client, type, fullpath, options = {}) {
-    const childOptions = this.settings || this.options || {};
-    if (typeof childOptions !== 'object') {
-      const err = 'Options must return an object.';
-      this.client.emit('error', err);
-    }
-    options = { ...defaultOptions, ...childOptions, ...options };
+    options = { ...defaultOptions, ...options };
     this.client = client;
     this.id = this.client.uniqid.gen();
     this.dir = path.dirname(fullpath);
