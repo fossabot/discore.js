@@ -7,6 +7,8 @@
 - `Command.reload()`.
 - И еще много всего.
 
+###### Based on discord.js
+
 ## Examples
 
 `index.js` structure:
@@ -46,7 +48,7 @@ new Core({
 
 ##### Methods:
 
-- uniqid.gen() // Generates unique identificator
+- `uniqid.gen()` // Generates unique identificator
 
 #### Events
 
@@ -171,7 +173,65 @@ new Core(config);
 - `addLevel()`
 - `add()`
 - `test()`
+
+##### Properties:
+
 - `length`
+
+#### Embed ( RichEmbed )
+
+Their structure:
+
+```js
+const { Embed } = require('discore.js');
+
+const embed = new Embed()
+  .addBlankField()
+  .addField('Title', 'Description')
+  .attachFile(file)
+  .attachFiles(files)
+  .setAuthor('author', 'image url')
+  .setColor(color)
+  .setDescription('description')
+  .setFooter('footer', 'image url')
+  .setImage('image url')
+  .setThumbnail('image url')
+  .setTimestamp()
+  .setTitle('title')
+  .setURL('url');
+```
+
+##### Methods:
+
+- `addBlankField()`
+- `addField()`
+- `attachFile()`
+- `attachFiles()`
+- `setAuthor()`
+- `setColor()`
+- `setDescription()`
+- `setFooter()`
+- `setImage()`
+- `setThumbnail()`
+- `setTimestamp()`
+- `setTitle()`
+- `setURL()`
+
+##### Properties:
+
+- `author`
+- `color`
+- `description`
+- `fields`
+- `file`
+- `files`
+- `footer`
+- `image`
+- `length`
+- `thumbnail`
+- `timestamp`
+- `title`
+- `url`
 
 #### Database
 
@@ -192,7 +252,7 @@ client.db = db;
 
 ##### Methods:
 
-- addModel()
+- `addModel()`
 
 #### Models ( DB )
 
@@ -212,11 +272,11 @@ db.addModel('modelName', data);
 
 ##### Methods:
 
-- hasOne()
-- findOne()
-- insertOne()
-- updateOne()
-- upsertOne()
+- `hasOne()`
+- `findOne()`
+- `insertOne()`
+- `updateOne()`
+- `upsertOne()`
 
 ###### hasOne()
 
