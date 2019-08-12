@@ -6,4 +6,5 @@ module.exports = {
   UniqueId: require('./util/UniqueId'),
   DB: require('./structures/DB'),
   Attachment: require('./util/Attachment'),
+  Embed: require('./structures/Embed'),
 };
