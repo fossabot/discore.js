@@ -17,6 +17,9 @@ const defaultOptions = {
   permLevels: new PermissionLevels(),
 };
 
+/**
+ * @extends {DiscordClient}
+ */
 module.exports = class extends Client {
   constructor(options = {}) {
     options = { ...defaultOptions, ...options };
@@ -66,7 +69,12 @@ module.exports = class extends Client {
       throw new TypeError(err);
     }
     this.public = {};
-    this._private = {};
+    /**
+     * @name Core#_private
+     * @type {Object}
+     * @private
+     */
+    Object.defineProperty(this, '_private', {});
     this._private.typing = thisOptions.typing;
     this._private.eventsFolder = thisOptions.eventsFolder;
     this._private.commandsFolder = thisOptions.commandsFolder;

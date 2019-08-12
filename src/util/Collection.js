@@ -9,17 +9,31 @@ const objFn = {
   },
 };
 
+/**
+ * @extends {Map}
+ */
 module.exports = class Collection extends Map {
+  /**
+   * @returns {Array}
+   */
   array() {
     return [...this.values()];
   }
 
+  /**
+   * @returns {Array}
+   */
   keyArray() {
     return [...this.keys()];
   }
 
-  first(count) {
-    if (count === undefined) count = 1;
+  /**
+   * @param {number} [count=1]
+   * @returns {*|Array<*>}
+   * @example collection.first();
+   * @example collection.first(10);
+   */
+  first(count = 1) {
     if (typeof count !== 'number') {
       const text = `The count must be a number. Instead got ${typeof count}.`;
       throw new TypeError(text);
@@ -33,7 +47,13 @@ module.exports = class Collection extends Map {
     count = Math.min(count, this.size);
     return arr.slice(0, count);
   }
-  
+
+  /**
+   * @param {number} [count=1]
+   * @returns {*|Array<*>}
+   * @example collection.firstKey();
+   * @example collection.firstKey(10);
+   */
   firstKey(count = 1) {
     if (typeof count !== 'number') {
       const text = `The count must be a number. Instead got ${typeof count}.`;
@@ -48,7 +68,13 @@ module.exports = class Collection extends Map {
     count = Math.min(count, this.size);
     return arr.slice(0, count);
   }
-  
+
+  /**
+   * @param {number} [count=1]
+   * @returns {*|Array<*>}
+   * @example collection.last();
+   * @example collection.last(10);
+   */
   last(count = 1) {
     if (typeof count !== 'number') {
       const text = `The count must be a number. Instead got ${typeof count}.`;
@@ -63,7 +89,13 @@ module.exports = class Collection extends Map {
     count = Math.min(count, this.size);
     return arr.slice(-count);
   }
-  
+
+  /**
+   * @param {number} [count=1]
+   * @returns {*|Array<*>}
+   * @example collection.lastKey();
+   * @example collection.lastKey(10);
+   */
   lastKey(count = 1) {
     if (typeof count !== 'number') {
       const text = `The count must be a number. Instead got ${typeof count}.`;
@@ -79,6 +111,12 @@ module.exports = class Collection extends Map {
     return arr.slice(-count);
   }
 
+  /**
+   * @param {number} [count=1]
+   * @returns {*|Array<*>}
+   * @example collection.random();
+   * @example collection.random(10);
+   */
   random(count = 1) {
     if (typeof count !== 'number') {
       const text = `The count must be a number. Instead got ${typeof count}.`;
@@ -99,6 +137,12 @@ module.exports = class Collection extends Map {
     return newArr;
   }
 
+  /**
+   * @param {number} [count=1]
+   * @returns {*|Array<*>}
+   * @example collection.randomKey();
+   * @example collection.randomKey(10);
+   */
   randomKey(count = 1) {
     if (typeof count !== 'number') {
       const text = `The count must be a number. Instead got ${typeof count}.`;
@@ -119,6 +163,12 @@ module.exports = class Collection extends Map {
     return newArr;
   }
 
+  /**
+   * @param {Function|Object|String} query
+   * @param {String} [value]
+   * @returns {Array<*>}
+   * @example collection.findAll(member => member.roles.has(role.id));
+   */
   findAll(query, value) {
     if (typeof query === 'string') {
       if (typeof value === 'undefined') {
@@ -147,6 +197,12 @@ module.exports = class Collection extends Map {
     return arr;
   }
 
+  /**
+   * @param {Function|Object|String} query
+   * @param {String} [value]
+   * @returns {*}
+   * @example collection.find(user => user.discriminator === '0001');
+   */
   find(query, value) {
     if (typeof query === 'string') {
       if (typeof value === 'undefined') {
@@ -174,6 +230,12 @@ module.exports = class Collection extends Map {
     return null;
   }
 
+  /**
+   * @param {Function|Object|String} query
+   * @param {String} [value]
+   * @returns {*}
+   * @example collection.findKey(user => user.discriminator === '0001');
+   */
   findKey(query, value) {
     if (typeof query === 'string') {
       if (typeof value === 'undefined') {
@@ -201,10 +263,22 @@ module.exports = class Collection extends Map {
     return null;
   }
 
+  /**
+   * @param {Function|Object|String} query
+   * @param {String} [value]
+   * @returns {Boolean}
+   * @example collection.exists(user => user.discriminator === '0001');
+   */
   exists(query, value) {
     return !!this.find(query, value);
   }
 
+  /**
+   * @param {Function} fn
+   * @param {*} [thisArg]
+   * @returns {number} Count of deleted entries
+   * @example collection.sweep(user => user.discriminator === '0001');
+   */
   sweep(fn, thisArg) {
     if (thisArg) fn = fn.bind(thisArg);
     const size = this.size;
@@ -214,6 +288,12 @@ module.exports = class Collection extends Map {
     return size - this.size;
   }
 
+  /**
+   * @param {Function} fn
+   * @param {*} [thisArg]
+   * @returns {Collection} Filtered collection
+   * @example collection.filter(user => user.discriminator === '0001');
+   */
   filter(fn, thisArg) {
     if (thisArg) fn = fn.bind(thisArg);
     const col = new this.constructor();
@@ -223,6 +303,12 @@ module.exports = class Collection extends Map {
     return col;
   }
 
+  /**
+   * @param {Function} fn
+   * @param {*} [thisArg]
+   * @returns {Array<*>} Filtered array of values
+   * @example collection.filterArray(user => user.discriminator === '0001');
+   */
   filterArray(fn, thisArg) {
     if (thisArg) fn = fn.bind(thisArg);
     const arr = [];
@@ -232,6 +318,22 @@ module.exports = class Collection extends Map {
     return arr;
   }
 
+  /**
+   * @param {Function} fn
+   * @param {*} [thisArg]
+   * @returns {Array<*>} Filtered array of values
+   * @example collection.filterArr(user => user.discriminator === '0001');
+   */
+  filterArr(...args) {
+    return this.filterArray(...args);
+  }
+
+  /**
+   * @param {Function} fn
+   * @param {*} [thisArg]
+   * @returns {Array<Collection>}
+   * @example const [more, less] = collection.partition(guild => guild.channels.size > 25);
+   */
   partition(fn, thisArg) {
     if (thisArg) fn = fn.bind(thisArg);
     const arr = [new this.constructor(), new this.constructor()];
@@ -242,6 +344,12 @@ module.exports = class Collection extends Map {
     return arr;
   }
 
+  /**
+   * @param {Function} fn
+   * @param {*} [thisArg]
+   * @returns {Array<*>}
+   * @example collection.map(user => user.discriminator = '0001');
+   */
   map(fn, thisArg) {
     if (thisArg) fn = fn.bind(thisArg);
     const arr = [];
@@ -251,6 +359,12 @@ module.exports = class Collection extends Map {
     return arr;
   }
 
+  /**
+   * @param {Function} fn
+   * @param {*} [thisArg]
+   * @returns {Collection}
+   * @example collection.mapCol(user => user.discriminator = '0001');
+   */
   mapCol(fn, thisArg) {
     if (thisArg) fn = fn.bind(thisArg);
     const col = new this.constructor();
@@ -260,6 +374,12 @@ module.exports = class Collection extends Map {
     return col;
   }
 
+  /**
+   * @param {Function} fn
+   * @param {*} [thisArg]
+   * @returns {Boolean}
+   * @example collection.some(user => user.discriminator === '0001');
+   */
   some(fn, thisArg) {
     if (thisArg) fn = fn.bind(thisArg);
     for (const [key, val] of this) {
@@ -268,6 +388,12 @@ module.exports = class Collection extends Map {
     return false;
   }
 
+  /**
+   * @param {Function} fn
+   * @param {*} [thisArg]
+   * @returns {Boolean}
+   * @example collection.every(user => user.discriminator === '0001');
+   */
   every(fn, thisArg) {
     if (thisArg) fn = fn.bind(thisArg);
     for (const [key, val] of this) {
@@ -276,8 +402,14 @@ module.exports = class Collection extends Map {
     return true;
   }
 
+  /**
+   * @param {Function} fn
+   * @param {*} [accumulator] Starting value
+   * @returns {*}
+   * @example collection.reduce((guildA, guildB) => guildA.channels.size + guildB.channels.size);
+   */
   reduce(fn, accumulator) {
-    if (typeof accumulator !== 'undefined' && typeof accumulator !== 'number') {
+    if (accumulator !== undefined && typeof accumulator !== 'number') {
       const text = `Second argument must be a number. Instead got ${typeof accumulator}.`;
       throw new TypeError(text);
     }
@@ -288,15 +420,29 @@ module.exports = class Collection extends Map {
     return accumulator;
   }
 
+  /**
+   * @param {Function} fn
+   * @param {*} [thisArg]
+   * @returns {Collection}
+   * @example collection.tap(guild => console.log(guild.channels.size));
+   */
   tap(fn, thisArg) {
     this.forEach(fn, thisArg);
     return this;
   }
 
+  /**
+   * @returns {Collection}
+   */
   clone() {
     return new this.constructor(this);
   }
 
+  /**
+   * @param {...Collection} collections
+   * @returns {Collection}
+   * @example collection.concat(col1, col2, col3);
+   */
   concat(...collections) {
     const col = new this.constructor(this);
     for (const collection of collections) {
@@ -305,6 +451,9 @@ module.exports = class Collection extends Map {
     return col;
   }
 
+  /**
+   * @returns {Array<*>}
+   */
   deleteAll() {
     const deleted = [];
     for (const [key, val] of this) {
@@ -314,6 +463,11 @@ module.exports = class Collection extends Map {
     return deleted;
   }
 
+  /**
+   * @param {...Collection} collections
+   * @returns {Boolean}
+   * @example collection.equals(col1, col2, col3);
+   */
   equals(...collections) {
     for (const collection of collections) {
       if (!collection) return false;
@@ -321,13 +475,22 @@ module.exports = class Collection extends Map {
       if (this.size !== collection.size) return false;
       return !this.find((value, key) => {
         const testVal = collection.get(key);
-        return testVal !== value || (testVal === undefined && !collection.has(key));
+        return (
+          testVal !== value || (testVal === undefined && !collection.has(key))
+        );
       });
     }
   }
 
-  sort(compareFunction = (x, y) => +(x > y) || +(x === y) - 1) {
-    const entries = [...this.entries].sort((a, b) => compareFunction(a[1], b[1], a[0], b[0]));
+  /**
+   * @param {Function} fn
+   * @returns {Collection} Sorted collection
+   * @example collection.sort((guildA, guildB) => guildA.channels.size - guildB.channels.size);
+   */
+  sort(fn = (x, y) => +(x > y) || +(x === y) - 1) {
+    const entries = [...this.entries].sort((a, b) =>
+      fn(a[1], b[1], a[0], b[0])
+    );
     const col = new this.constructor(entries);
     return col;
   }

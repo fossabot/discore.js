@@ -3,7 +3,12 @@ const Model = require('../util/Model');
 
 module.exports = class DB {
   constructor(url, options = {}) {
-    this._models = [];
+    /**
+     * @name DB#_models
+     * @type {Array<Model>}
+     * @private
+     */
+    Object.defineProperty(this, '_models', []);
     this.connection = mongoose.connection;
     if (typeof url !== 'string') {
       const text = `First argument must be a string. Instead got ${typeof url}`;
@@ -37,6 +42,15 @@ module.exports = class DB {
     });
   }
 
+  /**
+   * @param {String} name
+   * @param {Object} options
+   * @returns {String} name
+   * @example db.addModel('modelname', {
+   *  id: { type: String, default: undefined },
+   *  messageCount: { type: Number, default: 0 },
+   * });
+   */
   addModel(name, options) {
     if (typeof name !== 'string') {
       const text = `First argument must be a string. Instead got ${typeof name}`;
@@ -60,5 +74,6 @@ module.exports = class DB {
     }
     this._models.push(name);
     this[name] = new Model(name.toLowerCase(), options, defaultOptions);
+    return name;
   }
 };

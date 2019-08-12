@@ -8,9 +8,17 @@ const defaultOptions = {
   description: undefined,
 };
 
+/**
+ * @extends {Base}
+ */
 module.exports = class Command extends Base {
   constructor(client, fullpath, options = {}) {
     super(client, 'command', fullpath, options);
+    /**
+     * @name Command#_options
+     * @type {Object}
+     * @private
+     */
     this._options = { ...defaultOptions, ...this._options };
     if (typeof this._options.aliases === 'string') {
       this._options.aliases = [this._options.aliases];

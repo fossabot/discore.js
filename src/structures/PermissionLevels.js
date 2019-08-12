@@ -2,8 +2,18 @@ const Collection = require('../util/Collection');
 
 module.exports = class PermissionLevels {
   constructor() {
-    this._id = 0;
-    this._collection = new Collection();
+    /**
+     * @name PermissionLevels#_id
+     * @type {Number}
+     * @private
+     */
+    Object.defineProperty(this, '_id', 0);
+    /**
+     * @name PermissionLevels#_collection
+     * @type {Collection}
+     * @private
+     */
+    Object.defineProperty(this, '_collection', new Collection());
     this._collection.set(this._id, { brk: true, fn: () => true });
     this._id += 1;
   }
@@ -12,6 +22,13 @@ module.exports = class PermissionLevels {
     return this._id++;
   }
 
+  /**
+   * @param {Number} level Level number
+   * @param {Boolean} brk Break
+   * @param {Function} fn
+   * @returns {PermissionLevels}
+   * @example permLvls.addLevel(3, true, msg => msg.author.id === ownerId);
+   */
   addLevel(level, brk, fn) {
     if (!level) level = this._getId();
     if (this._collection.has(level)) {
@@ -41,6 +58,13 @@ module.exports = class PermissionLevels {
     return false;
   }
 
+  /**
+   * @param {Number} level
+   * @param {Message} message
+   * @async
+   * @returns {Boolean}
+   * @example permLvls.test(3, message);
+   */
   async test(level, message) {
     if (!this._collection.has(level)) return false;
     const { brk, fn } = this._collection.get(level);
@@ -55,6 +79,13 @@ module.exports = class PermissionLevels {
     return this._collection.length;
   }
 
+  /**
+   * @param {Number} level Level number
+   * @param {Boolean} brk Break
+   * @param {Function} fn
+   * @returns {PermissionLevels}
+   * @example permLvls.add(3, true, msg => msg.author.id === ownerId);
+   */
   add(...args) {
     return this.addLevel(...args);
   }

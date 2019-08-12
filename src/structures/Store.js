@@ -33,6 +33,9 @@ function getFiles(filename, maindir, thisdir) {
   return files;
 }
 
+/**
+ * @extends {Collection}
+ */
 module.exports = class Store extends Collection {
   constructor(client, type, defaults = null) {
     super();
@@ -48,6 +51,11 @@ module.exports = class Store extends Collection {
     this.init(this.filePath, this.folderName);
   }
 
+  /**
+   * @param {String} filepath
+   * @param {String} foldername
+   * @returns {Store}
+   */
   init(filepath, foldername) {
     try {
       const dirPath = path.dirname(filepath);

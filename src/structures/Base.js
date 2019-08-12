@@ -15,7 +15,12 @@ module.exports = class Base {
       this.client.emit('error', err);
     }
     options = { ...defaultOptions, ...childOptions, ...options };
-    this._options = options;
+    /**
+     * @name Base#_options
+     * @type {Object}
+     * @private
+     */
+    Object.defineProperty(this, '_options', options);
     this.id = this.client.uniqid.gen();
     this.dir = path.dirname(fullpath);
     this.file = path.basename(fullpath);
@@ -31,19 +36,32 @@ module.exports = class Base {
     this.name = this.key;
   }
 
+  /**
+   * @param {...*} ...args
+   * @private
+   */
   _run(...args) {
     if (this.enabled) this.run(...args);
     else this.disabledRun(...args);
     if (this.once) this.unload();
   }
 
+  /**
+   *
+   */
   run() {
     const err = 'Run method must be defined';
     this.client.emit('error', err);
   }
 
+  /**
+   *
+   */
   disabledRun() {}
 
+  /**
+   * @returns {Base}
+   */
   toggle() {
     if (this.enabled) this.enabled = false;
     if (!this.enabled) this.enabled = true;
@@ -51,16 +69,25 @@ module.exports = class Base {
     return this;
   }
 
+  /**
+   * @returns {Base}
+   */
   unload() {
     this.client.emit('error', 'Soon!');
     return this;
   }
 
+  /**
+   * @returns {Base}
+   */
   reload() {
     this.client.emit('error', 'Soon!');
     return this;
   }
 
+  /**
+   * @returns {Base}
+   */
   disable() {
     const isEnabled = this.enabled;
     this.enabled = false;
@@ -68,6 +95,9 @@ module.exports = class Base {
     return this;
   }
 
+  /**
+   * @returns {Base}
+   */
   enable() {
     const isEnabled = this.enabled;
     this.enabled = true;
@@ -75,13 +105,22 @@ module.exports = class Base {
     return this;
   }
 
+  /**
+   * @returns {String} Name
+   */
   toString() {
     return this.key;
   }
 
+  /**
+   * @private
+   */
   _init() {
     return this.init();
   }
 
+  /**
+   *
+   */
   init() {}
 };
