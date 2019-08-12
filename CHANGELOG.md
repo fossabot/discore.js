@@ -1,6 +1,6 @@
 # Change Log
 
-## [0.2.5] - 2019-08-12
+## [0.2.6] - 2019-08-12
 
 ### Added
 
@@ -12,6 +12,8 @@
 - CHANGELOG.md file.
 - Command.reload() method.
 - Command.unload() method.
+- Event.reload() method.
+- Event.unload() method.
 
 ### Changed
 
