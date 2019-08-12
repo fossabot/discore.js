@@ -8,7 +8,7 @@ module.exports = class DB {
      * @type {Array<Model>}
      * @private
      */
-    Object.defineProperty(this, '_models', []);
+    this._models = [];
     this.connection = mongoose.connection;
     if (typeof url !== 'string') {
       const text = `First argument must be a string. Instead got ${typeof url}`;

@@ -7,13 +7,13 @@ module.exports = class PermissionLevels {
      * @type {Number}
      * @private
      */
-    Object.defineProperty(this, '_id', 0);
+    this._id = 0;
     /**
      * @name PermissionLevels#_collection
      * @type {Collection}
      * @private
      */
-    Object.defineProperty(this, '_collection', new Collection());
+    this._collection = new Collection();
     this._collection.set(this._id, { brk: true, fn: () => true });
     this._id += 1;
   }

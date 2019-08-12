@@ -20,7 +20,7 @@ module.exports = class Base {
      * @type {Object}
      * @private
      */
-    Object.defineProperty(this, '_options', options);
+    this._options = options;
     this.id = this.client.uniqid.gen();
     this.dir = path.dirname(fullpath);
     this.file = path.basename(fullpath);

@@ -74,7 +74,7 @@ module.exports = class extends Client {
      * @type {Object}
      * @private
      */
-    Object.defineProperty(this, '_private', {});
+    this._private = {};
     this._private.typing = thisOptions.typing;
     this._private.eventsFolder = thisOptions.eventsFolder;
     this._private.commandsFolder = thisOptions.commandsFolder;
