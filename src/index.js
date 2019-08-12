@@ -5,6 +5,5 @@ module.exports = {
   Event: require('./structures/Event'),
   UniqueId: require('./util/UniqueId'),
   DB: require('./structures/DB'),
-  Attachment: require('./util/Attachment'),
   Embed: require('./structures/Embed'),
 };
