@@ -1,13 +1,3 @@
-# Todo-list:
-
-- `help` command must be included.
-- Usage for commands.
-- `Event.unload()`.
-- `Event.reload()`.
-- `Command.unload()`.
-- `Command.reload()`.
-- And more.
-
 ###### Based on discord.js
 
 ## Examples
@@ -44,6 +34,8 @@ new Core({
   cmdsIn: ['text'],
   ignoreCase: true,
   permLevels: new PermissionLevels(),
+  ignoreSelf: true,
+  ignoreBots: true,
 });
 ```
 

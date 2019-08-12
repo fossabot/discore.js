@@ -10,6 +10,16 @@ module.exports = class UniqueId {
     this.ids = new Set(ids);
   }
 
+  remove(id) {
+    if (!this.ids.has(id)) return null;
+    this.ids.delete(id);
+    return id;
+  }
+
+  delete(...args) {
+    return this.remove(...args);
+  }
+
   gen(length = 16) {
     let id = null;
     while (!id || this.ids.has(id)) id = this._genId(length);

@@ -11,7 +11,16 @@ module.exports = class extends Event {
     if (!message) return;
     if (!message.channel) return;
     if (!message.author) return;
-    const { cmdsIn, ignoreCase, prefix, splitArgs, cmdLowerCase } = this.client;
+    const {
+      cmdsIn,
+      ignoreCase,
+      prefix,
+      splitArgs,
+      ignoreBots,
+      ignoreSelf,
+    } = this.client;
+    if (ignoreBots && message.author.bot) return;
+    if (ignoreSelf && message.author.id === this.client.user.id) return;
     if (!cmdsIn.includes(message.channel.type)) return;
     let { content } = message;
     if (ignoreCase) content = content.toLowerCase();
@@ -26,7 +35,7 @@ module.exports = class extends Event {
     let args = message.content;
     if (splitArgs) args = args.split(splitArgs);
     let cmd = args.shift().slice(matched.length);
-    if (cmdLowerCase) cmd = cmd.toLowerCase();
+    if (ignoreCase) cmd = cmd.toLowerCase();
     const filter = e => e.key === cmd || e.aliases.includes(cmd);
     const command = this.client.commands.find(filter);
     if (!command) return;

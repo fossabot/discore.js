@@ -13,8 +13,9 @@ const defaultOptions = {
   splitArgs: ' ',
   cmdsIn: ['text'],
   ignoreCase: true,
-  cmdLowerCase: true,
   permLevels: new PermissionLevels(),
+  ignoreBots: true,
+  ignoreSelf: true,
 };
 
 /**
@@ -32,12 +33,21 @@ module.exports = class extends Client {
       splitArgs: options.splitArgs,
       cmdsIn: options.cmdsIn,
       ignoreCase: options.ignoreCase,
-      cmdLowerCase: options.cmdLowerCase,
       permLevels: options.permLevels,
+      ignoreBots: options.ignoreBots,
+      ignoreSelf: options.ignoreSelf,
     };
     delete options.typing;
     delete options.eventsFolder;
     delete options.commandsFolder;
+    delete options.token;
+    delete options.prefix;
+    delete options.splitArgs;
+    delete options.cmdsIn;
+    delete options.ignoreCase;
+    delete options.permLevels;
+    delete options.ignoreBots;
+    delete options.ignoreSelf;
     super(options);
     const { cmdsIn, prefix, splitArgs } = thisOptions;
     if (
@@ -86,7 +96,8 @@ module.exports = class extends Client {
     this.cmdsIn = thisOptions.cmdsIn;
     this.ignoreCase = thisOptions.ignoreCase;
     this.permLevels = thisOptions.permLevels;
-    this.cmdLowerCase = thisOptions.cmdLowerCase;
+    this.ignoreBots = thisOptions.ignoreBots;
+    this.ignoreSelf = thisOptions.ignoreSelf;
     this.uniqid = new UniqueId();
 
     new Store(this, 'event', path.join(__dirname, '../events'));

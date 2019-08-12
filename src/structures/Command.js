@@ -6,14 +6,15 @@ const defaultOptions = {
   aliases: [],
   permLevel: 0,
   description: undefined,
+  usage: undefined,
 };
 
 /**
  * @extends {Base}
  */
 module.exports = class Command extends Base {
-  constructor(client, fullpath, options = {}) {
-    super(client, 'command', fullpath, options);
+  constructor(client, store, fullpath, options = {}) {
+    super(client, store, 'command', fullpath, options);
     /**
      * @name Command#_options
      * @type {Object}
@@ -38,6 +39,7 @@ module.exports = class Command extends Base {
     this.aliases = this._options.aliases;
     this.permLevel = this._options.permLevel;
     this.description = this._options.description;
+    this.usage = this._options.usage;
     this.cooldowns = new Collection();
   }
 };

@@ -1,6 +1,6 @@
 {
   "name": "discore.js",
-  "version": "0.1.3",
+  "version": "0.2.5",
   "main": "./src/index.js",
   "scripts": {},
   "author": "Zargovv (Max Zargov)",
@@ -20,7 +20,8 @@
     "discore.js",
     "js",
     ".js",
-    "bot"
+    "bot",
+    "core"
   ],
   "bugs": {
     "url": "https://github.com/zargovv/discore.js/issues"

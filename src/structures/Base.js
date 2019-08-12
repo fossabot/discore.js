@@ -4,15 +4,17 @@ const defaultOptions = {
   enabled: true,
   key: null,
   name: null,
+  id: undefined,
 };
 
 module.exports = class Base {
-  constructor(client, type, fullpath, options = {}) {
+  constructor(client, store, type, fullpath, options = {}) {
     this.client = client;
+    this.store = store;
     const childOptions = this.settings || this.options || {};
     if (typeof childOptions !== 'object') {
       const err = 'Options must return an object.';
-      this.client.emit('error', err);
+      return this.client.emit('error', err);
     }
     options = { ...defaultOptions, ...childOptions, ...options };
     /**
@@ -21,7 +23,13 @@ module.exports = class Base {
      * @private
      */
     this._options = options;
-    this.id = this.client.uniqid.gen();
+    this._id = this.client.uniqid.gen();
+    this.id = options.id;
+    if (!this.id) this.id = this._id;
+    if (this.store.find(e => e.id === this.id)) {
+      const err = `Event with id ${this.id} is already exists`;
+      return this.client.emit('error', err);
+    }
     this.dir = path.dirname(fullpath);
     this.file = path.basename(fullpath);
     this.type = type;
@@ -72,8 +80,11 @@ module.exports = class Base {
   /**
    * @returns {Base}
    */
-  unload() {
-    this.client.emit('error', 'Soon!');
+  unload(emit = true) {
+    if (typeof this._unload === 'function') this._unload();
+    this.client.uniqid.delete(this._id);
+    this.store.delete(this.id);
+    if (emit) this.client.emit(`${this.type}Unloaded`, this);
     return this;
   }
 
@@ -81,7 +92,9 @@ module.exports = class Base {
    * @returns {Base}
    */
   reload() {
-    this.client.emit('error', 'Soon!');
+    this.unload(false);
+    this.store.init(null, null, path.join(this.dir, this.file));
+    this.client.emit(`${this.type}Reloaded`, this);
     return this;
   }
 

@@ -56,8 +56,12 @@ module.exports = class Store extends Collection {
    * @param {String} foldername
    * @returns {Store}
    */
-  init(filepath, foldername) {
+  init(filepath, foldername, onlyfile = null) {
     try {
+      if (typeof onlyfile === 'string') {
+        filepath = path.dirname(onlyfile);
+        foldername = path.basename(filepath);
+      }
       const dirPath = path.dirname(filepath);
       let files = fs.readdirSync(dirPath);
       let dir = files.find(e => e === foldername);
@@ -66,12 +70,18 @@ module.exports = class Store extends Collection {
       const stat = fs.statSync(dir);
       if (!stat.isDirectory()) return;
       files = getFiles(dir);
+      if (typeof onlyfile === 'string') {
+        files = [files.find(e => e.path === onlyfile)];
+      }
       files.forEach(file => {
         const parents = [];
         let temp = file;
         while (temp.folder) {
           parents.push(temp.folder.name);
           temp = temp.folder;
+        }
+        if (require.cache[require.resolve(file.path)]) {
+          delete require.cache[require.resolve(file.path)];
         }
         const Prop = require(file.path);
         if (typeof Prop !== 'function') {
@@ -99,14 +109,14 @@ module.exports = class Store extends Collection {
                 parents.unshift(parentName);
                 delete Prop[key];
               } else {
-                const prop = new Prop[key](this.client, file.path);
+                const prop = new Prop[key](this.client, this, file.path);
                 prop._private = { parents };
                 this.set(prop.id, prop);
               }
             }
           }
         } else {
-          const prop = new Prop(this.client, file.path);
+          const prop = new Prop(this.client, this, file.path);
           prop._private = { parents };
           this.set(prop.id, prop);
         }
