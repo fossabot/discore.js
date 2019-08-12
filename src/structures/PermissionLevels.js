@@ -4,7 +4,7 @@ module.exports = class PermissionLevels {
   constructor() {
     this._id = 0;
     this._collection = new Collection();
-    this._collection.set(this._id, () => true);
+    this._collection.set(this._id, { brk: true, fn: () => true });
     this._id += 1;
   }
 
@@ -16,6 +16,13 @@ module.exports = class PermissionLevels {
     if (!level) level = this._getId();
     if (this._collection.has(level)) {
       throw new Error(`Level ${level} already exists.`);
+    }
+    if (typeof fn !== 'function') {
+      throw new TypeError('Fn argument must be a function.');
+    }
+    brk = Boolean(brk);
+    if (typeof brk !== 'boolean') {
+      throw new TypeError('Brk argument must be boolean.');
     }
     this._collection.set(level, { brk, fn, level });
     return this;
