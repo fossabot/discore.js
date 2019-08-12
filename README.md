@@ -42,7 +42,7 @@ new Core({
   splitArgs: ' ',
   cmdsIn: ['text'],
   ignoreCase: true,
-  permissionLevels: new PermissionLevels(),
+  permLevels: new PermissionLevels(),
 });
 ```
 

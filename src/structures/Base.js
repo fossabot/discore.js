@@ -8,16 +8,22 @@ const defaultOptions = {
 
 module.exports = class Base {
   constructor(client, type, fullpath, options = {}) {
-    options = { ...defaultOptions, ...options };
     this.client = client;
+    const childOptions = this.settings || this.options || {};
+    if (typeof childOptions !== 'object') {
+      const err = 'Options must return an object.';
+      this.client.emit('error', err);
+    }
+    options = { ...defaultOptions, ...childOptions, ...options };
+    this._options = options;
     this.id = this.client.uniqid.gen();
     this.dir = path.dirname(fullpath);
     this.file = path.basename(fullpath);
     this.type = type;
-    this.enabled = options.enabled;
+    this.enabled = this._options.enabled;
     this.key =
-      options.key ||
-      options.name ||
+      this._options.key ||
+      this._options.name ||
       this.file
         .split('.')
         .slice(0, -1)

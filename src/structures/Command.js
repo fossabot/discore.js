@@ -10,40 +10,26 @@ const defaultOptions = {
 
 module.exports = class Command extends Base {
   constructor(client, fullpath, options = {}) {
-    const childOptions = this.settings || this.options || {};
-    if (typeof childOptions !== 'object') {
-      const err = 'Options must return an object.';
-      this.client.emit('error', err);
-    }
-    options = { ...defaultOptions, ...childOptions, ...options };
-    const thisOptions = {
-      cooldown: options.cooldown,
-      permLevel: options.permLevel,
-      description: options.description,
-      aliases: options.aliases,
-    };
-    delete options.cooldown;
-    delete options.aliases;
-    delete options.permLevel;
-    delete options.description;
     super(client, 'command', fullpath, options);
-    if (typeof thisOptions.aliases === 'string')
-      thisOptions.aliases = [thisOptions.aliases];
+    this._options = { ...defaultOptions, ...this._options };
+    if (typeof this._options.aliases === 'string') {
+      this._options.aliases = [this._options.aliases];
+    }
     if (
-      typeof thisOptions.aliases !== 'object' ||
-      {}.hasOwnProperty.call(thisOptions.aliases, 'some')
+      typeof this._options.aliases !== 'object' ||
+      {}.hasOwnProperty.call(this._options.aliases, 'some')
     ) {
       const err = 'Aliases property must be an array or string.';
       this.client.emit('error', err);
     }
-    if (thisOptions.aliases.some(e => typeof e !== 'string')) {
+    if (this._options.aliases.some(e => typeof e !== 'string')) {
       const err = 'Aliases must be a string.';
       this.client.emit('error', err);
     }
-    this.cooldown = thisOptions.cooldown;
-    this.aliases = thisOptions.aliases;
-    this.permLevel = thisOptions.permLevel;
-    this.description = thisOptions.description;
+    this.cooldown = this._options.cooldown;
+    this.aliases = this._options.aliases;
+    this.permLevel = this._options.permLevel;
+    this.description = this._options.description;
     this.cooldowns = new Collection();
   }
 

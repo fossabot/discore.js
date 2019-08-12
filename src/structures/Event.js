@@ -6,18 +6,9 @@ const defaultOptions = {
 
 module.exports = class Event extends Base {
   constructor(client, fullpath, options = {}) {
-    const childOptions = this.settings || this.options || {};
-    if (typeof childOptions !== 'object') {
-      const err = 'Options must return an object.';
-      this.client.emit('error', err);
-    }
-    options = { ...defaultOptions, ...childOptions, ...options };
-    const thisOptions = {
-      once: options.once,
-    };
-    delete options.once;
     super(client, 'event', fullpath, options);
-    this.once = thisOptions.once;
+    this._options = { ...defaultOptions, ...this._options };
+    this.once = this._options.once;
     this.client.on(this.key, this._run.bind(this));
   }
 
