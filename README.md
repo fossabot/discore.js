@@ -1,11 +1,12 @@
-# Не доделано:
+# Todo-list:
 
-- Команда `help` должна быть изначально.
+- `help` command must be included.
+- Usage for commands.
 - `Event.unload()`.
 - `Event.reload()`.
 - `Command.unload()`.
 - `Command.reload()`.
-- И еще много всего.
+- And more.
 
 ###### Based on discord.js
 
@@ -73,7 +74,12 @@ module.exports = class extends Event {
   }
 
   run(...params) {
-    // Event code
+    // Event code.
+    // Runs only if enabled.
+  }
+
+  disabledRun(...params) {
+    // Same as run but runs only if disabled.
   }
 
   init() {
@@ -122,8 +128,13 @@ module.exports = class extends Command {
     // For example, test.js is gonna be 'test'
   }
 
-  run(message, args) {
-    // Command code
+  run(...params) {
+    // Command code.
+    // Runs only if enabled.
+  }
+
+  disabledRun(...params) {
+    // Same as run but runs only if disabled.
   }
 
   init() {

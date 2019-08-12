@@ -32,13 +32,4 @@ module.exports = class Command extends Base {
     this.description = this._options.description;
     this.cooldowns = new Collection();
   }
-
-  _run(...args) {
-    if (this.enabled) this.run(...args);
-  }
-
-  run() {
-    const err = 'Run method must be defined';
-    this.client.emit('error', err);
-  }
 };

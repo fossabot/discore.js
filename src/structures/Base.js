@@ -31,6 +31,19 @@ module.exports = class Base {
     this.name = this.key;
   }
 
+  _run(...args) {
+    if (this.enabled) this.run(...args);
+    else this.disabledRun(...args);
+    if (this.once) this.unload();
+  }
+
+  run() {
+    const err = 'Run method must be defined';
+    this.client.emit('error', err);
+  }
+
+  disabledRun() {}
+
   toggle() {
     if (this.enabled) this.enabled = false;
     if (!this.enabled) this.enabled = true;
