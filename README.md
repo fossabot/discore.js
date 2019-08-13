@@ -2,10 +2,13 @@
   <p>
     <div>
       <a href="https://www.npmjs.com/package/discore.js">
-        <img src="https://img.shields.io/npm/v/discore.js.svg" alt="NPM Version">
+        <img alt="npm version" src="https://img.shields.io/npm/v/discore.js">
       </a>
       <a href="https://www.npmjs.com/package/discore.js">
-        <img src="https://img.shields.io/npm/dt/discore.js.svg" alt="NPM Downloads">
+        <img src="https://img.shields.io/npm/dt/discore.js.svg" alt="npm downloads">
+      </a>
+      <a href="https://www.npmjs.com/package/discore.js">
+        <img src="https://img.shields.io/snyk/vulnerabilities/npm/discore.js" alt="npm vulnerabilities">
       </a>
     </div>
     <div>
@@ -13,7 +16,26 @@
         <img src="https://img.shields.io/david/zargovv/discore.js.svg" alt="Dependencies" />
       </a>
       <a href="https://travis-ci.org/zargovv/discore.js.svg">
-        <img src="https://travis-ci.org/zargovv/discore.js.svg" alt="Build Status">
+        <img src="https://travis-ci.org/zargovv/discore.js.svg" alt="Build status">
+      </a>
+      <a href="https://github.com/zargovv/discore.js">
+        <img alt="GitHub issues" src="https://img.shields.io/github/issues-raw/zargovv/discore.js">
+      </a>
+      <a href="https://github.com/zargovv/discore.js">
+        <img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/zargovv/discore.js">
+      </a>
+    </div>
+    <div>
+      <a href="https://github.com/zargovv/discore.js">
+        <img alt="GitHub forks" src="https://img.shields.io/github/forks/zargovv/discore.js?logo=github">
+      </a>
+      <a href="https://github.com/zargovv/discore.js">
+        <img alt="GitHub stars" src="https://img.shields.io/github/stars/zargovv/discore.js?logo=github">
+      </a>
+    </div>
+    <div>
+      <a href="https://twitter.com/intent/follow?screen_name=zargovv">
+        <img src="https://img.shields.io/twitter/follow/zargovv?style=flat&logo=twitter" alt="Follow On Twitter">
       </a>
     </div>
   </p>
