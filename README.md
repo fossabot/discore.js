@@ -2,18 +2,34 @@
   <p>
     <div>
       <a href="https://www.npmjs.com/package/discore.js">
-        <img src="https://img.shields.io/npm/v/discore.js.svg" alt="NPM Version">
+        <img alt="npm version" src="https://img.shields.io/npm/v/discore.js">
       </a>
       <a href="https://www.npmjs.com/package/discore.js">
-        <img src="https://img.shields.io/npm/dt/discore.js.svg" alt="NPM Downloads">
+        <img src="https://img.shields.io/npm/dt/discore.js.svg" alt="npm downloads">
+      </a>
+      <a href="https://www.npmjs.com/package/discore.js">
+        <img src="https://img.shields.io/snyk/vulnerabilities/npm/discore.js" alt="npm vulnerabilities">
       </a>
     </div>
     <div>
       <a href="https://david-dm.org/zargovv/discore.js">
-        <img src="https://img.shields.io/david/zargovv/discore.js.svg" alt="Dependencies" />
+        <img alt="dependencies" src="https://img.shields.io/librariesio/release/npm/discore.js">
       </a>
-      <a href="https://travis-ci.org/zargovv/discore.js.svg">
-        <img src="https://travis-ci.org/zargovv/discore.js.svg" alt="Build Status">
+      <a href="https://github.com/zargovv/discore.js">
+        <img alt="GitHub issues" src="https://img.shields.io/github/issues-raw/zargovv/discore.js">
+      </a>
+      <a href="https://github.com/zargovv/discore.js">
+        <img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/zargovv/discore.js">
+      </a>
+    </div>
+    <div>
+      <a href="https://github.com/zargovv/discore.js">
+        <img alt="GitHub stars" src="https://img.shields.io/github/stars/zargovv/discore.js?logo=github">
+      </a>
+    </div>
+    <div>
+      <a href="https://twitter.com/intent/follow?screen_name=zargovv">
+        <img src="https://img.shields.io/twitter/follow/zargovv?style=flat&logo=twitter" alt="Follow On Twitter">
       </a>
     </div>
   </p>
@@ -66,7 +82,7 @@ new Core({
 });
 ```
 
-#### Methods:
+#### Methods
 
 - `uniqid.gen()` // Generates unique identificator
 
@@ -83,10 +99,12 @@ const { Event } = require('discore.js');
 module.exports = class extends Event {
   get options() {
     return {
+      // Will run run() method if true, otherwise disabledRun() method.
       enabled: true,
       key: null, // Same as name but more important.
       name: null, // Key is going to be event name.
-      once: false,
+      once: false, // If true, event will emitted only once.
+      id: undefined, // UniqID if not defined. Used to get the event.
     };
     // If key and name are null then they will be defined as file name.
     // For example, ready.js is gonna be 'ready'
@@ -109,7 +127,7 @@ module.exports = class extends Event {
 };
 ```
 
-#### Methods:
+#### Methods
 
 - `toggle()`
 - `enable()`
@@ -118,7 +136,7 @@ module.exports = class extends Event {
 - `reload()`
 - `toString()`
 
-#### Included events:
+#### Included events
 
 - Command Handler
 
@@ -135,25 +153,33 @@ const { Command } = require('discore.js');
 module.exports = class extends Command {
   get options() {
     return {
+      // Will run run() method if true, otherwise disabledRun() method.
       enabled: true,
       key: null, // Same as name but more important.
       name: null, // Key is going to be command name.
+      id: undefined, // UniqID if not defined. Used to get the event.
       cooldown: 0, // In milliseconds
       aliases: [],
-      permLevel: 0,
+      permLevel: 0, // Runs noPermsRun() method if tests not passed.
       description: undefined,
+      usage: undefined,
     };
     // If key and name are null then they will be defined as file name.
     // For example, test.js is gonna be 'test'
   }
 
-  run(...params) {
+  run(message, args) {
     // Command code.
     // Runs only if enabled.
   }
 
-  disabledRun(...params) {
+  disabledRun(message, args) {
     // Same as run but runs only if disabled.
+  }
+
+  noPermsRun(message, args) {
+    // Same as run
+    // but runs only if Permission Level test is not passed.
   }
 
   init() {
@@ -164,7 +190,7 @@ module.exports = class extends Command {
 };
 ```
 
-#### Methods:
+#### Methods
 
 - `toggle()`
 - `enable()`
@@ -173,6 +199,19 @@ module.exports = class extends Command {
 - `reload()`
 - `toString()`
 
+##### Method Examples
+
+```js
+const command = this.client.commands.get('command');
+command
+  .toggle()
+  .enable()
+  .disable()
+  .unload()
+  .reload()
+  .toString();
+```
+
 ### Store
 
 Do you want to load event or command in live mode?
@@ -180,14 +219,24 @@ You can use load() method!
 
 `.\` is gonna be your main file's root folder.
 
+#### Methods
+
+- `load()`
+- `get()`
+
+##### Method Examples
+
 ```js
 this.client.events.load('./events/event');
 this.client.commands.load('./commands/command');
+
+this.client.events.get('event_id');
+this.client.events.get('event_name'); // Same as previus example
+
+this.client.commands.get('command_id');
+this.client.commands.get('command_name'); // Same as previus example
+this.client.commands.get('command_alias'); // Same as previus example
 ```
-
-#### Methods:
-
-- `load()`
 
 ### Permission Levels
 
@@ -214,13 +263,13 @@ permLevels.test(3, msg);
 new Core(config);
 ```
 
-#### Methods:
+#### Methods
 
 - `addLevel()`
 - `add()`
 - `test()`
 
-#### Properties:
+#### Properties
 
 - `length`
 
@@ -247,7 +296,7 @@ const embed = new Embed()
   .setURL('url');
 ```
 
-#### Methods:
+#### Methods
 
 - `addBlankField()`
 - `addField()`
@@ -263,7 +312,7 @@ const embed = new Embed()
 - `setTitle()`
 - `setURL()`
 
-#### Properties:
+#### Properties
 
 - `author`
 - `color`
@@ -281,7 +330,7 @@ const embed = new Embed()
 
 ### Database
 
-DB's structure (options argument defined with default configuration):
+DB's structure:
 
 ```js
 const { Core, DB } = require('discore.js');
@@ -295,17 +344,17 @@ new Core({
 });
 ```
 
-#### Methods:
+#### Methods
 
 - `addModel()`
 
-#### Properties:
+#### Properties
 
 - `collection`
 
 ### Models ( DB )
 
-Their structure (options argument defined with default configuration):
+Their structure:
 
 ```js
 // Must define all default properties.
@@ -319,7 +368,7 @@ const data = {
 db.addModel('modelName', data);
 ```
 
-#### Methods:
+#### Methods
 
 - `hasOne()`
 - `findOne()`

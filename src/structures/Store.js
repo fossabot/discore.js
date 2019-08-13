@@ -52,6 +52,20 @@ module.exports = class Store extends Collection {
   }
 
   /**
+   * @param {*} key
+   * @returns {*|null}
+   */
+  get(key) {
+    let data = this.find(e => e.id === key);
+    if (!data) data = this.find(e => e.key === key);
+    if (!data && this.type === 'command') {
+      data = this.find(e => e.aliases.includes(key));
+    }
+    if (!data) data = null;
+    return data;
+  }
+
+  /**
    * @param {String} filepath Path to the file you want to load.
    * @returns {Store} this
    */
