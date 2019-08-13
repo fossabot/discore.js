@@ -1,3 +1,29 @@
+<div align="center">
+  <p>
+    <div>
+      <a href="https://www.npmjs.com/package/discore.js">
+        <img src="https://img.shields.io/npm/v/discore.js.svg" alt="NPM Version">
+      </a>
+      <a href="https://www.npmjs.com/package/discore.js">
+        <img src="https://img.shields.io/npm/dt/discore.js.svg" alt="NPM Downloads">
+      </a>
+    </div>
+    <div>
+      <a href="https://david-dm.org/zargovv/discore.js">
+        <img src="https://img.shields.io/david/zargovv/discore.js.svg" alt="Dependencies" />
+      </a>
+      <a href="https://travis-ci.org/zargovv/discore.js.svg">
+        <img src="https://travis-ci.org/zargovv/discore.js.svg" alt="Build Status">
+      </a>
+    </div>
+  </p>
+  <p>
+    <a href="https://nodei.co/npm/discore.js/">
+      <img src="https://nodei.co/npm/discore.js.png?downloads=true&stars=true">
+    </a>
+  </p>
+</div>
+
 ###### Based on discord.js
 
 ## Examples
@@ -36,14 +62,15 @@ new Core({
   permLevels: new PermissionLevels(),
   ignoreSelf: true,
   ignoreBots: true,
+  db: new DB(),
 });
 ```
 
-##### Methods:
+#### Methods:
 
 - `uniqid.gen()` // Generates unique identificator
 
-#### Events
+### Events
 
 Events are placed in `.\events\`(**eventsFolder** option).
 For instance creating `.\events\Main\ready.js` will be an event `ready` in the `Main` category. Subcategories are also allowed and gonna be a second and more folder levels.
@@ -82,7 +109,7 @@ module.exports = class extends Event {
 };
 ```
 
-##### Methods:
+#### Methods:
 
 - `toggle()`
 - `enable()`
@@ -91,11 +118,11 @@ module.exports = class extends Event {
 - `reload()`
 - `toString()`
 
-##### Included events:
+#### Included events:
 
 - Command Handler
 
-#### Commands
+### Commands
 
 Commands are placed in `.\commands\` (**commandsFolder** option).
 For instance creating `.\events\Main\Command.js` will be a command `Command` in the `Main` category. Subcategories are also allowed and gonna be a second and more folder levels.
@@ -137,7 +164,7 @@ module.exports = class extends Command {
 };
 ```
 
-##### Methods:
+#### Methods:
 
 - `toggle()`
 - `enable()`
@@ -146,7 +173,23 @@ module.exports = class extends Command {
 - `reload()`
 - `toString()`
 
-#### Permission Levels
+### Store
+
+Do you want to load event or command in live mode?
+You can use load() method!
+
+`.\` is gonna be your main file's root folder.
+
+```js
+this.client.events.load('./events/event');
+this.client.commands.load('./commands/command');
+```
+
+#### Methods:
+
+- `load()`
+
+### Permission Levels
 
 Their structure:
 
@@ -171,17 +214,17 @@ permLevels.test(3, msg);
 new Core(config);
 ```
 
-##### Methods:
+#### Methods:
 
 - `addLevel()`
 - `add()`
 - `test()`
 
-##### Properties:
+#### Properties:
 
 - `length`
 
-#### Embed ( RichEmbed )
+### Embed ( RichEmbed )
 
 Their structure:
 
@@ -204,7 +247,7 @@ const embed = new Embed()
   .setURL('url');
 ```
 
-##### Methods:
+#### Methods:
 
 - `addBlankField()`
 - `addField()`
@@ -220,7 +263,7 @@ const embed = new Embed()
 - `setTitle()`
 - `setURL()`
 
-##### Properties:
+#### Properties:
 
 - `author`
 - `color`
@@ -236,28 +279,27 @@ const embed = new Embed()
 - `title`
 - `url`
 
-#### Database
+### Database
 
 DB's structure (options argument defined with default configuration):
 
 ```js
 const { Core, DB } = require('discore.js');
 
-const client = new Core({
-  /* ... */
-});
 const db = new DB('url', {
   /* Options */
 });
 
-client.db = db;
+new Core({
+  db,
+});
 ```
 
-##### Methods:
+#### Methods:
 
 - `addModel()`
 
-#### Models ( DB )
+### Models ( DB )
 
 Their structure (options argument defined with default configuration):
 
@@ -273,7 +315,7 @@ const data = {
 db.addModel('modelName', data);
 ```
 
-##### Methods:
+#### Methods:
 
 - `hasOne()`
 - `findOne()`
@@ -281,7 +323,7 @@ db.addModel('modelName', data);
 - `updateOne()`
 - `upsertOne()`
 
-###### hasOne()
+##### hasOne()
 
 ```js
 // Working with model from previus example.
@@ -297,7 +339,7 @@ console.log(typeof res2); // Same.
 console.log(typeof res3); // Same.
 ```
 
-###### findOne()
+##### findOne()
 
 ```js
 // Working with model from previus example.
@@ -321,7 +363,7 @@ console.log(typeof res2); // Same.
 console.log(typeof res3); // Same.
 ```
 
-###### insertOne()
+##### insertOne()
 
 ```js
 // **upsertOne() method is recommended to use!**
@@ -331,7 +373,7 @@ db.Modelname.insertOne({
 });
 ```
 
-###### updateOne()
+##### updateOne()
 
 ```js
 // **upsertOne() method is recommended to use!**
@@ -345,7 +387,7 @@ db.Modelname.updateOne('id', '3212', { messageCount: 2 });
 db.Modelname.updateOne(val => val.id === '3212', { messageCount: 2 });
 ```
 
-###### upsertOne()
+##### upsertOne()
 
 ```js
 /*

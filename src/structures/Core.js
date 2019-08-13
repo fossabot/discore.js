@@ -2,6 +2,7 @@ const { Client } = require('discord.js');
 const path = require('path');
 const Store = require('./Store');
 const PermissionLevels = require('./PermissionLevels');
+const DB = require('./DB');
 const UniqueId = require('../util/UniqueId');
 
 const defaultOptions = {
@@ -16,6 +17,7 @@ const defaultOptions = {
   permLevels: new PermissionLevels(),
   ignoreBots: true,
   ignoreSelf: true,
+  db: new DB(),
 };
 
 /**
@@ -36,6 +38,7 @@ module.exports = class extends Client {
       permLevels: options.permLevels,
       ignoreBots: options.ignoreBots,
       ignoreSelf: options.ignoreSelf,
+      db: options.db,
     };
     delete options.typing;
     delete options.eventsFolder;
@@ -48,8 +51,13 @@ module.exports = class extends Client {
     delete options.permLevels;
     delete options.ignoreBots;
     delete options.ignoreSelf;
+    delete options.db;
     super(options);
-    const { cmdsIn, prefix, splitArgs } = thisOptions;
+    const { cmdsIn, prefix, splitArgs, db } = thisOptions;
+    if (!(db instanceof DB)) {
+      const err = 'Db option must be instance of DB.';
+      throw new Error(err);
+    }
     if (
       (cmdsIn !== undefined &&
         typeof cmdsIn !== 'string' &&
@@ -98,6 +106,7 @@ module.exports = class extends Client {
     this.permLevels = thisOptions.permLevels;
     this.ignoreBots = thisOptions.ignoreBots;
     this.ignoreSelf = thisOptions.ignoreSelf;
+    this.db = thisOptions.db;
     this.uniqid = new UniqueId();
 
     new Store(this, 'event', path.join(__dirname, '../events'));

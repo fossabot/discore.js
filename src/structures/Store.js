@@ -52,6 +52,19 @@ module.exports = class Store extends Collection {
   }
 
   /**
+   * @param {String} filepath Path to the file you want to load.
+   * @returns {Store} this
+   */
+  load(filepath) {
+    if (typeof filepath !== 'string') {
+      const err = 'Filepath argument must be a string.';
+      throw new TypeError(err);
+    }
+    filepath = path.join(this.client._private.dirpath, filepath);
+    this.init(null, null, filepath);
+  }
+
+  /**
    * @param {String} filepath
    * @param {String} foldername
    * @returns {Store}
