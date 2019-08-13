@@ -299,6 +299,10 @@ new Core({
 
 - `addModel()`
 
+#### Properties:
+
+- `collection`
+
 ### Models ( DB )
 
 Their structure (options argument defined with default configuration):
@@ -320,6 +324,7 @@ db.addModel('modelName', data);
 - `hasOne()`
 - `findOne()`
 - `insertOne()`
+- `deleteOne()`
 - `updateOne()`
 - `upsertOne()`
 
@@ -371,6 +376,22 @@ db.Modelname.insertOne({
   id: '3213',
   messageCount: 1, // If not defined, going to be 0.
 });
+```
+
+##### deleteOne()
+
+```js
+// returns null or document.
+db.Modelname.deleteOne({ id: '3213' });
+
+/*
+  Does the same thing but returns null
+  because document is already deleted.
+*/
+db.Modelname.deleteOne('id', '3212');
+
+// Same as previus example.
+db.Modelname.deleteOne(val => val.id === '3212');
 ```
 
 ##### updateOne()

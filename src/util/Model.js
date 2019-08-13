@@ -51,6 +51,33 @@ module.exports = class Model {
     col.insertOne(data);
   }
 
+  deleteOne(query, value) {
+    if (typeof query === 'string') {
+      if (typeof value === 'undefined') {
+        const text = 'Value must be specified.';
+        throw new Error(text);
+      }
+      const prop = query;
+      query = {};
+      query[prop] = value;
+    }
+    if (typeof dataOrValue !== 'object') {
+      const text = `Data must be an object. Instead got ${typeof dataOrValue}`;
+      throw new TypeError(text);
+    }
+    if (typeof query !== 'object' && typeof query !== 'function') {
+      const text = `First argument must be an object, function or string. Instead got ${typeof query}.`;
+      throw new TypeError(text);
+    }
+    if (!this.hasOne(query)) return null;
+    const data = this.findOne(query);
+    if (!data) return null;
+    this.collection.delete(data._id);
+    const col = mongoose.connection.collection(this._name);
+    col.deleteOne({ _id: data._id });
+    return data;
+  }
+
   updateOne(query, dataOrValue, newData) {
     if (typeof query === 'string') {
       if (typeof dataOrValue === 'undefined') {
