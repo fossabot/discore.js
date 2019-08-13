@@ -13,7 +13,7 @@
     </div>
     <div>
       <a href="https://david-dm.org/zargovv/discore.js">
-        <img src="https://img.shields.io/david/zargovv/discore.js.svg" alt="Dependencies" />
+        <img alt="dependencies" src="https://img.shields.io/librariesio/release/npm/discore.js">
       </a>
       <a href="https://travis-ci.org/zargovv/discore.js.svg">
         <img src="https://travis-ci.org/zargovv/discore.js.svg" alt="Build status">
