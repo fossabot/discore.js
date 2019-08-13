@@ -27,9 +27,6 @@
     </div>
     <div>
       <a href="https://github.com/zargovv/discore.js">
-        <img alt="GitHub forks" src="https://img.shields.io/github/forks/zargovv/discore.js?logo=github">
-      </a>
-      <a href="https://github.com/zargovv/discore.js">
         <img alt="GitHub stars" src="https://img.shields.io/github/stars/zargovv/discore.js?logo=github">
       </a>
     </div>
