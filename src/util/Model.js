@@ -79,7 +79,7 @@ module.exports = class Model {
     }
     data = { ...this.defaults, ...data };
     if (!data._id) data._id = new mongoose.mongo.ObjectID();
-    const col = mongoose.connection.collection(this.name);
+    const col = this._db.collection(this.name);
     this.collection.set(data._id, data);
     col.insertOne(data);
     return data;
@@ -109,7 +109,7 @@ module.exports = class Model {
     const data = this.findOne(query);
     if (!data) return null;
     this.collection.delete(data._id);
-    const col = mongoose.connection.collection(this.name);
+    const col = this._db.collection(this.name);
     col.deleteOne({ _id: data._id });
     return data;
   }
