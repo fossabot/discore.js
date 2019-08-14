@@ -73,8 +73,9 @@ module.exports = class Model {
    * @property {*} data
    * @returns {*} data
    * @example model.insertOne({ id: '1' });
+   * @async
    */
-  insertOne(data) {
+  async insertOne(data) {
     if (typeof data !== 'object') {
       const text = `First argument must be an object. Instead got ${typeof data}`;
       throw new TypeError(text);
@@ -82,7 +83,8 @@ module.exports = class Model {
     data = { ...this.defaults, ...data };
     if (!data._id) data._id = new mongoose.mongo.ObjectID();
     const col = this._db.collection(this.name);
-    col.insertOne(data).then(() => this.collection.set(data._id, data));
+    await col.insertOne(data);
+    this.collection.set(data._id, data);
     return data;
   }
 
@@ -91,8 +93,9 @@ module.exports = class Model {
    * @property {*} value
    * @returns {*} Deleted data.
    * @example model.deleteOne({ id: '1' });
+   * @async
    */
-  deleteOne(query, value) {
+  async deleteOne(query, value) {
     if (typeof query === 'string') {
       if (typeof value === 'undefined') {
         const text = 'Value must be specified.';
@@ -109,10 +112,8 @@ module.exports = class Model {
     if (!this.hasOne(query)) return null;
     const data = this.findOne(query);
     if (!data) return null;
-    this._db
-      .collection(this.name)
-      .deleteOne({ _id: data._id })
-      .then(() => this.collection.delete(data._id));
+    await this._db.collection(this.name).deleteOne({ _id: data._id });
+    this.collection.delete(data._id);
     return data;
   }
 
@@ -126,7 +127,9 @@ module.exports = class Model {
         }
       }
     }
-    doc.save().then(() => this.collection.set(doc._id, doc._doc));
+    await doc.save();
+    this.collection.set(doc._id, doc._doc);
+    return doc._doc;
   }
 
   /**
@@ -159,8 +162,7 @@ module.exports = class Model {
     }
     if (!this.hasOne(query)) return null;
     const data = this.findOne(query);
-    this._updateOne(data._id, value);
-    return value;
+    return this._updateOne(data._id, value);
   }
 
   /**
@@ -171,9 +173,10 @@ module.exports = class Model {
    * @example model.upsertOne({ id: '1' }, { id: '2' });
    * @example model.upsertOne(value => value.id === '1', { id: '2' });
    * @example model.upsertOne('id', '1', { id: '2' });
+   * @async
    */
-  upsertOne(query, value, newData) {
-    const updated = this.updateOne(query, value, newData);
+  async upsertOne(query, value, newData) {
+    const updated = await this.updateOne(query, value, newData);
     if (updated) return updated;
     if (typeof query === 'function') query = {};
     if (typeof query === 'string') {
@@ -186,7 +189,7 @@ module.exports = class Model {
       query[prop] = value;
       value = newData;
     }
-    this.insertOne({ ...this.defaults, ...query, ...value });
+    await this.insertOne({ ...this.defaults, ...query, ...value });
     return { ...this.defaults, ...query, ...value };
   }
 };
