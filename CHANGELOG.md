@@ -8,6 +8,12 @@
 - Store.get() method.
 - Model.deleteOne() method.
 
+### Changed
+
+### Fixed
+
+- DB.addModel() method.
+
 ## [0.3.1] - 2019-08-13 Hotfix
 
 ### Added

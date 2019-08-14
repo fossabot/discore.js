@@ -13,7 +13,7 @@ module.exports = class Model {
     this._name = name;
     this.collection = new Collection();
     this._Schema = new mongoose.Schema(options);
-    this._Model = mongoose.Model(name, this._Schema);
+    this._Model = mongoose.model(name, this._Schema);
   }
 
   async getAll() {
