@@ -1,6 +1,17 @@
 # Change Log
 
-## [0.6.1] - dev
+## [0.6.2] - 2019-08-14
+
+### Added
+
+### Changed
+
+### Fixed
+
+- Collection methods.
+- Model constructor.
+
+## [0.6.1] - 2019-08-14
 
 ### Added
 
@@ -33,7 +44,7 @@
 
 - And more.
 
-## [0.3.1] - 2019-08-13 Hotfix
+## [0.3.1] - 2019-08-13
 
 ### Added
 

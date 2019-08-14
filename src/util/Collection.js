@@ -296,7 +296,7 @@ module.exports = class Collection extends Map {
    */
   filter(fn, thisArg) {
     if (thisArg) fn = fn.bind(thisArg);
-    const col = new this.constructor();
+    const col = new Collection();
     for (const [key, val] of this) {
       if (fn(val, key, this)) col.set(key, val);
     }
@@ -336,7 +336,7 @@ module.exports = class Collection extends Map {
    */
   partition(fn, thisArg) {
     if (thisArg) fn = fn.bind(thisArg);
-    const arr = [new this.constructor(), new this.constructor()];
+    const arr = [new Collection(), new Collection()];
     for (const [key, val] of this) {
       if (fn(val, key, this)) arr[0].set(key, val);
       else arr[1].set(key, val);
@@ -367,7 +367,7 @@ module.exports = class Collection extends Map {
    */
   mapCol(fn, thisArg) {
     if (thisArg) fn = fn.bind(thisArg);
-    const col = new this.constructor();
+    const col = new Collection();
     for (const [key, val] of this) {
       col.set(key, fn(val, key, this));
     }

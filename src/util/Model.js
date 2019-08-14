@@ -11,12 +11,12 @@ module.exports = class Model {
 
     this.defaults = defaults;
     this.name = name;
-    this._modelName = `${this._name
-      .slice(0, 1)
-      .toUpperCase()}${this._name.slice(1).toLowerCase()}`;
+    this._modelName = `${this.name.slice(0, 1).toUpperCase()}${this.name
+      .slice(1)
+      .toLowerCase()}`;
     this.collection = new Collection();
     this.Schema = new mongoose.Schema(options);
-    this.Model = mongoose.model(this._modelName, this.Schema, this._name);
+    this.Model = mongoose.model(this._modelName, this.Schema, this.name);
     this._db = this.Model.db;
     this._toCollection();
   }
@@ -79,7 +79,7 @@ module.exports = class Model {
     }
     data = { ...this.defaults, ...data };
     if (!data._id) data._id = new mongoose.mongo.ObjectID();
-    const col = mongoose.connection.collection(this._name);
+    const col = mongoose.connection.collection(this.name);
     this.collection.set(data._id, data);
     col.insertOne(data);
     return data;
@@ -109,7 +109,7 @@ module.exports = class Model {
     const data = this.findOne(query);
     if (!data) return null;
     this.collection.delete(data._id);
-    const col = mongoose.connection.collection(this._name);
+    const col = mongoose.connection.collection(this.name);
     col.deleteOne({ _id: data._id });
     return data;
   }
