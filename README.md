@@ -378,6 +378,12 @@ new Core({
 });
 ```
 
+#### Events
+
+- `dbConnected`
+- `dbError`
+- `dbDisconnected`
+
 #### Methods
 
 - `addModel()`
@@ -386,7 +392,7 @@ new Core({
 
 - `collection`
 
-### Models ( DB )
+### DB Models
 
 Their structure:
 
@@ -398,7 +404,6 @@ const data = {
   messageCount: { type: Number, default: 0 },
 };
 
-// Model name can not contain spaces in it
 db.addModel('modelName', data);
 ```
 
@@ -415,12 +420,12 @@ db.addModel('modelName', data);
 
 ```js
 // Working with model from previus example.
-// You can use `db['Modelname']`
+// You can use `db['modelName']`
 
 // Searches for document with `id` of '123'.
-let res1 = db.Modelname.hasOne({ id: '123' });
-let res2 = db.Modelname.hasOne('id', '123'); // Same.
-let res3 = db.Modelname.hasOne(val => val.id === '123'); // Same.
+let res1 = db.modelName.hasOne({ id: '123' });
+let res2 = db.modelName.hasOne('id', '123'); // Same.
+let res3 = db.modelName.hasOne(val => val.id === '123'); // Same.
 
 console.log(typeof res); // Returns true or false (Boolean).
 console.log(typeof res2); // Same.
@@ -431,12 +436,12 @@ console.log(typeof res3); // Same.
 
 ```js
 // Working with model from previus example.
-// You can use `db['Modelname']` or `db.Modelname`
+// You can use `db['modelName']` or `db.modelName`
 
 // Searches for document with `id` of '123'.
-let res1 = db.Modelname.findOne({ id: '123' });
-let res2 = db.Modelname.findOne('id', '123'); // Same.
-let res3 = db.Modelname.findOne(val => val.id === '123'); // Same.
+let res1 = db.modelName.findOne({ id: '123' });
+let res2 = db.modelName.findOne('id', '123'); // Same.
+let res3 = db.modelName.findOne(val => val.id === '123'); // Same.
 
 /*
   Returns document. If there is no document
@@ -455,7 +460,7 @@ console.log(typeof res3); // Same.
 
 ```js
 // **upsertOne() method is recommended to use!**
-db.Modelname.insertOne({
+db.modelName.insertOne({
   id: '3213',
   messageCount: 1, // If not defined, going to be 0.
 });
@@ -465,16 +470,16 @@ db.Modelname.insertOne({
 
 ```js
 // returns null or document.
-db.Modelname.deleteOne({ id: '3213' });
+db.modelName.deleteOne({ id: '3213' });
 
 /*
   Does the same thing but returns null
   because document is already deleted.
 */
-db.Modelname.deleteOne('id', '3212');
+db.modelName.deleteOne('id', '3212');
 
 // Same as previus example.
-db.Modelname.deleteOne(val => val.id === '3212');
+db.modelName.deleteOne(val => val.id === '3212');
 ```
 
 ##### updateOne()
@@ -486,9 +491,9 @@ db.Modelname.deleteOne(val => val.id === '3212');
   All of these examples are going to search
   for `id` of '3213' and update 
 */
-db.Modelname.updateOne({ id: '3213' }, { messageCount: 2 });
-db.Modelname.updateOne('id', '3212', { messageCount: 2 });
-db.Modelname.updateOne(val => val.id === '3212', { messageCount: 2 });
+db.modelName.updateOne({ id: '3213' }, { messageCount: 2 });
+db.modelName.updateOne('id', '3212', { messageCount: 2 });
+db.modelName.updateOne(val => val.id === '3212', { messageCount: 2 });
 ```
 
 ##### upsertOne()
@@ -503,7 +508,7 @@ db.Modelname.updateOne(val => val.id === '3212', { messageCount: 2 });
 // All of these examples are going to search
 // for `id` of '3213' and update
 // messageCount to 2.
-db.Modelname.upsertOne({ id: '3213' }, { messageCount: 2 });
-db.Modelname.upsertOne('id', '3212', { messageCount: 2 });
-db.Modelname.upsertOne(val => val.id === '3212', { messageCount: 2 });
+db.modelName.upsertOne({ id: '3213' }, { messageCount: 2 });
+db.modelName.upsertOne('id', '3212', { messageCount: 2 });
+db.modelName.upsertOne(val => val.id === '3212', { messageCount: 2 });
 ```

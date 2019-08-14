@@ -113,6 +113,16 @@ module.exports = class extends Client {
     this.db = thisOptions.db;
     this.uniqid = new UniqueId();
 
+    if (this.db && this.db.connection) {
+      this.db.connection.on('connected', () =>
+        this.emit('dbConnected', this.db)
+      );
+      this.db.connection.on('err', err => this.emit('dbError', err));
+      this.db.connection.on('disconnected', () =>
+        this.emit('dbDisconnected', this.db)
+      );
+    }
+
     new Store(this, 'event', path.join(__dirname, '../events'));
     new Store(this, 'command');
 

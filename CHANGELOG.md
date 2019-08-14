@@ -4,6 +4,18 @@
 
 ### Added
 
+- DB Event: 'dbConnected'
+- DB Event: 'dbError'
+- DB Event: 'dbDisconnected'
+
+### Changed
+
+### Fixed
+
+## [0.6.2] - 2019-08-14
+
+### Added
+
 ### Changed
 
 ### Fixed

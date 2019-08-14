@@ -31,15 +31,6 @@ module.exports = class DB {
     mongoose.connect(url, options);
     mongoose.set('useFindAndModify', false);
     mongoose.Promise = global.Promise;
-    mongoose.connection.on('connected', async () => {
-      console.log('DB connection opened\n');
-    });
-    mongoose.connection.on('err', err => {
-      console.log(`DB connection err:\n\n${err}\n`);
-    });
-    mongoose.connection.on('disconnected', () => {
-      console.log('DB connection closed\n');
-    });
   }
 
   /**
@@ -56,7 +47,6 @@ module.exports = class DB {
       const text = `First argument must be a string. Instead got ${typeof name}`;
       throw new TypeError(text);
     }
-    name = `${name.split('')[0].toUpperCase()}${name.slice(1).toLowerCase()}`;
     if (this._models.includes(name)) {
       const text = `Model with name ${name} already exists`;
       throw new ReferenceError(text);
