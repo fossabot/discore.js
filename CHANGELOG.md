@@ -1,6 +1,16 @@
 # Change Log
 
-## [0.6.2] - 2019-08-14
+## [0.6.4] - 2019-08-14
+
+### Added
+
+### Changed
+
+### Fixed
+
+- Model methods fixed.
+
+## [0.6.3] - 2019-08-14
 
 ### Added
 
