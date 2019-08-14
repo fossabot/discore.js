@@ -114,6 +114,16 @@ module.exports = class Model {
     return data;
   }
 
+  async _updateOne(_id, value) {
+    const doc = await this.Model.findOne({ _id });
+    for (const key in value) {
+      if ({}.hasOwnProperty.call(value, key)) {
+        if (value[key] !== doc[key]) doc[key] = value[key];
+      }
+    }
+    doc.save();
+  }
+
   /**
    * @property {function|object|*} query
    * @property {*} value Value or data.
@@ -145,8 +155,7 @@ module.exports = class Model {
     if (!this.hasOne(query)) return null;
     const data = this.findOne(query);
     this.collection.set(data._id, value);
-    const col = this._db.collection(this.name);
-    col.updateOne({ _id: data._id }, { $set: value });
+    this._updateOne(data._id, value);
     return value;
   }
 

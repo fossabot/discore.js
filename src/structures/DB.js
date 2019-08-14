@@ -29,7 +29,6 @@ module.exports = class DB {
     };
     options = { ...defaultOptions, ...options };
     mongoose.connect(url, options);
-    mongoose.set('useFindAndModify', false);
     mongoose.Promise = global.Promise;
   }
 
