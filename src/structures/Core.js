@@ -57,7 +57,7 @@ module.exports = class extends Client {
     if (
       db !== undefined &&
       db !== null &&
-      (typeof db !== 'function' || !(db instanceof DB))
+      (typeof db !== 'object' || !(db instanceof DB))
     ) {
       const err = 'Db option must be instance of DB.';
       throw new Error(err);
