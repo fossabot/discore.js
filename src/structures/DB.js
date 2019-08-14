@@ -32,13 +32,13 @@ module.exports = class DB {
     mongoose.set('useFindAndModify', false);
     mongoose.Promise = global.Promise;
     mongoose.connection.on('connected', async () => {
-      console.log('Mongoose connection successfully opened\n');
+      console.log('DB connection opened\n');
     });
     mongoose.connection.on('err', err => {
-      console.log(`Mongoose connection err:\n\n${err}\n`);
+      console.log(`DB connection err:\n\n${err}\n`);
     });
     mongoose.connection.on('disconnected', () => {
-      console.log('Mongoose connection disconnected\n');
+      console.log('DB connection closed\n');
     });
   }
 
