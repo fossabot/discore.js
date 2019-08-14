@@ -42,4 +42,6 @@ module.exports = class Command extends Base {
     this.usage = this._options.usage;
     this.cooldowns = new Collection();
   }
+
+  noPermsRun() {}
 };

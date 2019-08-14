@@ -32,20 +32,20 @@ module.exports = class DB {
     mongoose.set('useFindAndModify', false);
     mongoose.Promise = global.Promise;
     mongoose.connection.on('connected', async () => {
-      console.log('Mongoose connection successfully opened\n');
+      console.log('DB connection opened\n');
     });
     mongoose.connection.on('err', err => {
-      console.log(`Mongoose connection err:\n\n${err}\n`);
+      console.log(`DB connection err:\n\n${err}\n`);
     });
     mongoose.connection.on('disconnected', () => {
-      console.log('Mongoose connection disconnected\n');
+      console.log('DB connection closed\n');
     });
   }
 
   /**
    * @param {String} name
    * @param {Object} options
-   * @returns {String} name
+   * @returns {DB} db
    * @example db.addModel('modelname', {
    *  id: { type: String, default: undefined },
    *  messageCount: { type: Number, default: 0 },
@@ -74,6 +74,6 @@ module.exports = class DB {
     }
     this._models.push(name);
     this[name] = new Model(name.toLowerCase(), options, defaultOptions);
-    return name;
+    return this;
   }
 };

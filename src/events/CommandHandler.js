@@ -43,7 +43,7 @@ module.exports = class extends Event {
       command.permLevel,
       message
     );
-    if (!permTest) return;
+    if (!permTest) return command.noPermsRun(message, args);
     if (command.cooldowns.get(message.author.id) > Date.now()) return;
     command.cooldowns.set(message.author.id, Date.now() + command.cooldown);
     command._run(message, args);

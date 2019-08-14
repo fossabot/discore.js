@@ -1,5 +1,38 @@
 # Change Log
 
+## [0.6.1] - dev
+
+### Added
+
+- Model.deleteOne() method.
+
+- Command.noPermsRun() method.
+
+- Store.get() method.
+
+- Model JSDoc.
+
+- Command.customOptions property.
+- Command.cOptions property.
+- Event.customOptions property.
+- Event.cOptions property.
+
+- Model.defaults property. ( Default options )
+- Model.name property.
+
+- And more.
+
+### Changed
+
+### Fixed
+
+- DB constructor.
+- DB.addModel() method.
+- Model.insertOne() method.
+- Model.deleteOne() method.
+
+- And more.
+
 ## [0.3.1] - 2019-08-13 Hotfix
 
 ### Added
@@ -8,7 +41,7 @@
 
 ### Fixed
 
-- TypeError: First argument must be a string error.
+- Core Option: db.
 
 ## [0.3.0] - 2019-08-13
 

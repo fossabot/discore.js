@@ -15,9 +15,6 @@
       <a href="https://david-dm.org/zargovv/discore.js">
         <img alt="dependencies" src="https://img.shields.io/librariesio/release/npm/discore.js">
       </a>
-      <a href="https://travis-ci.org/zargovv/discore.js.svg">
-        <img src="https://travis-ci.org/zargovv/discore.js.svg" alt="Build status">
-      </a>
       <a href="https://github.com/zargovv/discore.js">
         <img alt="GitHub issues" src="https://img.shields.io/github/issues-raw/zargovv/discore.js">
       </a>
@@ -85,7 +82,7 @@ new Core({
 });
 ```
 
-#### Methods:
+#### Methods
 
 - `uniqid.gen()` // Generates unique identificator
 
@@ -102,13 +99,32 @@ const { Event } = require('discore.js');
 module.exports = class extends Event {
   get options() {
     return {
+      // Will run run() method if true, otherwise disabledRun() method.
       enabled: true,
       key: null, // Same as name but more important.
       name: null, // Key is going to be event name.
-      once: false,
+      once: false, // If true, event will emitted only once.
+      id: undefined, // UniqID if not defined. Used to get the event.
     };
     // If key and name are null then they will be defined as file name.
     // For example, ready.js is gonna be 'ready'
+  }
+
+  get customOptions() {
+    return {
+      // You can put any options you want.
+      // And use it via this.custom.
+    };
+  }
+
+  get cOptions() {
+    return {
+      // Same as customOptions property.
+      /*
+        If you define both customOptions and cOptions
+        then customOptions becomes more priority
+      */
+    };
   }
 
   run(...params) {
@@ -128,7 +144,7 @@ module.exports = class extends Event {
 };
 ```
 
-#### Methods:
+#### Methods
 
 - `toggle()`
 - `enable()`
@@ -137,7 +153,7 @@ module.exports = class extends Event {
 - `reload()`
 - `toString()`
 
-#### Included events:
+#### Included events
 
 - Command Handler
 
@@ -154,25 +170,50 @@ const { Command } = require('discore.js');
 module.exports = class extends Command {
   get options() {
     return {
+      // Will run run() method if true, otherwise disabledRun() method.
       enabled: true,
       key: null, // Same as name but more important.
       name: null, // Key is going to be command name.
+      id: undefined, // UniqID if not defined. Used to get the event.
       cooldown: 0, // In milliseconds
       aliases: [],
-      permLevel: 0,
+      permLevel: 0, // Runs noPermsRun() method if tests not passed.
       description: undefined,
+      usage: undefined,
     };
     // If key and name are null then they will be defined as file name.
     // For example, test.js is gonna be 'test'
   }
 
-  run(...params) {
+  get customOptions() {
+    return {
+      // You can put any options you want.
+      // And use it via this.custom.
+    };
+  }
+
+  get cOptions() {
+    return {
+      // Same as customOptions property.
+      /*
+        If you define both customOptions and cOptions
+        then customOptions becomes more priority.
+      */
+    };
+  }
+
+  run(message, args) {
     // Command code.
     // Runs only if enabled.
   }
 
-  disabledRun(...params) {
+  disabledRun(message, args) {
     // Same as run but runs only if disabled.
+  }
+
+  noPermsRun(message, args) {
+    // Same as run
+    // but runs only if Permission Level test is not passed.
   }
 
   init() {
@@ -183,7 +224,7 @@ module.exports = class extends Command {
 };
 ```
 
-#### Methods:
+#### Methods
 
 - `toggle()`
 - `enable()`
@@ -192,6 +233,19 @@ module.exports = class extends Command {
 - `reload()`
 - `toString()`
 
+##### Method Examples
+
+```js
+const command = this.client.commands.get('command');
+command
+  .toggle()
+  .enable()
+  .disable()
+  .unload()
+  .reload()
+  .toString();
+```
+
 ### Store
 
 Do you want to load event or command in live mode?
@@ -199,14 +253,24 @@ You can use load() method!
 
 `.\` is gonna be your main file's root folder.
 
+#### Methods
+
+- `load()`
+- `get()`
+
+##### Method Examples
+
 ```js
 this.client.events.load('./events/event');
 this.client.commands.load('./commands/command');
+
+this.client.events.get('event_id');
+this.client.events.get('event_name'); // Same as previus example
+
+this.client.commands.get('command_id');
+this.client.commands.get('command_name'); // Same as previus example
+this.client.commands.get('command_alias'); // Same as previus example
 ```
-
-#### Methods:
-
-- `load()`
 
 ### Permission Levels
 
@@ -233,13 +297,13 @@ permLevels.test(3, msg);
 new Core(config);
 ```
 
-#### Methods:
+#### Methods
 
 - `addLevel()`
 - `add()`
 - `test()`
 
-#### Properties:
+#### Properties
 
 - `length`
 
@@ -266,7 +330,7 @@ const embed = new Embed()
   .setURL('url');
 ```
 
-#### Methods:
+#### Methods
 
 - `addBlankField()`
 - `addField()`
@@ -282,7 +346,7 @@ const embed = new Embed()
 - `setTitle()`
 - `setURL()`
 
-#### Properties:
+#### Properties
 
 - `author`
 - `color`
@@ -300,7 +364,7 @@ const embed = new Embed()
 
 ### Database
 
-DB's structure (options argument defined with default configuration):
+DB's structure:
 
 ```js
 const { Core, DB } = require('discore.js');
@@ -314,13 +378,17 @@ new Core({
 });
 ```
 
-#### Methods:
+#### Methods
 
 - `addModel()`
 
+#### Properties
+
+- `collection`
+
 ### Models ( DB )
 
-Their structure (options argument defined with default configuration):
+Their structure:
 
 ```js
 // Must define all default properties.
@@ -334,11 +402,12 @@ const data = {
 db.addModel('modelName', data);
 ```
 
-#### Methods:
+#### Methods
 
 - `hasOne()`
 - `findOne()`
 - `insertOne()`
+- `deleteOne()`
 - `updateOne()`
 - `upsertOne()`
 
@@ -390,6 +459,22 @@ db.Modelname.insertOne({
   id: '3213',
   messageCount: 1, // If not defined, going to be 0.
 });
+```
+
+##### deleteOne()
+
+```js
+// returns null or document.
+db.Modelname.deleteOne({ id: '3213' });
+
+/*
+  Does the same thing but returns null
+  because document is already deleted.
+*/
+db.Modelname.deleteOne('id', '3212');
+
+// Same as previus example.
+db.Modelname.deleteOne(val => val.id === '3212');
 ```
 
 ##### updateOne()
