@@ -30,9 +30,7 @@ module.exports = class Model {
     const data = await this.Model.find({});
     if (!data) return col;
     for (const val of data) {
-      if ({}.hasOwnProperty.call(data, val)) {
-        col.set(val._id, val._doc);
-      }
+      col.set(val._id, val._doc);
     }
     return col;
   }
@@ -82,7 +80,10 @@ module.exports = class Model {
     }
     data = { ...this.defaults, ...data };
     if (!data._id) data._id = new mongoose.mongo.ObjectID();
-    this.collection.set(data._id, data);
+    this.collection.set(data._id.toHexString(), {
+      ...data,
+      _id: data._id.toHexString(),
+    });
     await this._db.collection(this.name).insertOne(data);
     return data;
   }
@@ -111,20 +112,11 @@ module.exports = class Model {
     if (!this.hasOne(query)) return null;
     const data = this.findOne(query);
     if (!data) return null;
-    await this._db.collection(this.name).findOneAndDelete({ _id: data._id });
     this.collection.delete(data._id);
-    return data;
-  }
-
-  async _updateOne(_id, value) {
-    const doc = await this._db
+    await this._db
       .collection(this.name)
-      .findOneAndUpdate(
-        { _id },
-        { $set: value },
-        { upsert: false, new: false }
-      );
-    this.collection.set(doc._id, doc._doc);
+      .findOneAndDelete({ _id: new mongoose.mongo.ObjectID(data._id) });
+    return data;
   }
 
   /**
@@ -135,8 +127,9 @@ module.exports = class Model {
    * @example model.updateOne({ id: '1' }, { id: '2' });
    * @example model.updateOne(value => value.id === '1', { id: '2' });
    * @example model.updateOne('id', '1', { id: '2' });
+   * @async
    */
-  updateOne(query, value, newData) {
+  async updateOne(query, value, newData) {
     if (typeof query === 'string') {
       if (typeof value === 'undefined') {
         const text = 'Value must be specified.';
@@ -157,7 +150,18 @@ module.exports = class Model {
     }
     if (!this.hasOne(query)) return null;
     const data = this.findOne(query);
-    return this._updateOne(data._id, value);
+    this.collection.set(data._id, {
+      ...data,
+      ...value,
+      _id: data._id,
+    });
+    await this._db
+      .collection(this.name)
+      .findOneAndUpdate(
+        { _id: new mongoose.mongo.ObjectID(data._id) },
+        { $set: value }
+      );
+    return { ...data, _id: new mongoose.mongo.ObjectID(data._id) };
   }
 
   /**
