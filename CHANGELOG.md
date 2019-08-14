@@ -8,9 +8,15 @@
 - Store.get() method.
 - Model.deleteOne() method.
 
+## [0.3.1] - 2019-08-13 Hotfix
+
+### Added
+
 ### Changed
 
 ### Fixed
+
+- TypeError: First argument must be a string error.
 
 ## [0.3.0] - 2019-08-13
 

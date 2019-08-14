@@ -78,7 +78,7 @@ new Core({
   permLevels: new PermissionLevels(),
   ignoreSelf: true,
   ignoreBots: true,
-  db: new DB(),
+  db: null,
 });
 ```
 

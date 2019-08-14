@@ -17,7 +17,7 @@ const defaultOptions = {
   permLevels: new PermissionLevels(),
   ignoreBots: true,
   ignoreSelf: true,
-  db: new DB(),
+  db: null,
 };
 
 /**
@@ -54,7 +54,11 @@ module.exports = class extends Client {
     delete options.db;
     super(options);
     const { cmdsIn, prefix, splitArgs, db } = thisOptions;
-    if (!(db instanceof DB)) {
+    if (
+      db !== undefined &&
+      db !== null &&
+      (typeof db !== 'function' || !(db instanceof DB))
+    ) {
       const err = 'Db option must be instance of DB.';
       throw new Error(err);
     }
