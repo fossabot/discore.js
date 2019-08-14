@@ -154,7 +154,7 @@ module.exports = class Model {
     }
     if (!this.hasOne(query)) return null;
     const data = this.findOne(query);
-    this.collection.set(data._id, value);
+    this.collection.set(data._id, { ...data, ...value });
     this._updateOne(data._id, value);
     return value;
   }
