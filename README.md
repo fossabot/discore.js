@@ -110,6 +110,23 @@ module.exports = class extends Event {
     // For example, ready.js is gonna be 'ready'
   }
 
+  get customOptions() {
+    return {
+      // You can put any options you want.
+      // And use it via this.custom.
+    };
+  }
+
+  get cOptions() {
+    return {
+      // Same as customOptions property.
+      /*
+        If you define both customOptions and cOptions
+        then customOptions becomes more priority
+      */
+    };
+  }
+
   run(...params) {
     // Event code.
     // Runs only if enabled.
@@ -166,6 +183,23 @@ module.exports = class extends Command {
     };
     // If key and name are null then they will be defined as file name.
     // For example, test.js is gonna be 'test'
+  }
+
+  get customOptions() {
+    return {
+      // You can put any options you want.
+      // And use it via this.custom.
+    };
+  }
+
+  get cOptions() {
+    return {
+      // Same as customOptions property.
+      /*
+        If you define both customOptions and cOptions
+        then customOptions becomes more priority.
+      */
+    };
   }
 
   run(message, args) {

@@ -16,6 +16,11 @@ module.exports = class Base {
       const err = 'Options must return an object.';
       return this.client.emit('error', err);
     }
+    const customOptions = {
+      ...(this.cOptions || {}),
+      ...(this.customOptions || {}),
+    };
+    this.custom = customOptions;
     options = { ...defaultOptions, ...childOptions, ...options };
     /**
      * @name Base#_options

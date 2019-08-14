@@ -9,11 +9,16 @@ module.exports = class Model {
     }
     name = name.toLowerCase();
 
-    this._defaults = defaults;
-    this._name = name;
+    this.defaults = defaults;
+    this.name = name;
+    this._modelName = `${this._name
+      .slice(0, 1)
+      .toUpperCase()}${this._name.slice(1).toLowerCase()}`;
     this.collection = new Collection();
-    this._Schema = new mongoose.Schema(options);
-    this._Model = mongoose.model(name, this._Schema);
+    this.Schema = new mongoose.Schema(options);
+    this.Model = mongoose.model(this._modelName, this.Schema, this._name);
+    this._db = this.Model.db;
+    this._toCollection();
   }
 
   /**
@@ -21,7 +26,7 @@ module.exports = class Model {
    * @async
    */
   async getAll() {
-    const data = await this._Model.find({});
+    const data = await this.Model.find({});
     if (!data) return new Collection();
     const col = new Collection();
     for (const val of data) {
@@ -59,7 +64,7 @@ module.exports = class Model {
    */
   findOne(query, value) {
     const data = this.collection.find(query, value);
-    return data ? { ...this._defaults, ...data } : this._defaults;
+    return data ? { ...this.defaults, ...data } : this.defaults;
   }
 
   /**
@@ -72,7 +77,7 @@ module.exports = class Model {
       const text = `First argument must be an object. Instead got ${typeof data}`;
       throw new TypeError(text);
     }
-    data = { ...this._defaults, ...data };
+    data = { ...this.defaults, ...data };
     if (!data._id) data._id = new mongoose.mongo.ObjectID();
     const col = mongoose.connection.collection(this._name);
     this.collection.set(data._id, data);
@@ -140,7 +145,7 @@ module.exports = class Model {
     if (!this.hasOne(query)) return null;
     const data = this.findOne(query);
     this.collection.set(data._id, value);
-    this._Model.updateOne({ _id: data._id }, { $set: value });
+    this.Model.updateOne({ _id: data._id }, { $set: value });
     return value;
   }
 
@@ -167,7 +172,7 @@ module.exports = class Model {
       query[prop] = value;
       value = newData;
     }
-    this.insertOne({ ...this._defaults, ...query, ...value });
-    return { ...this._defaults, ...query, ...value };
+    this.insertOne({ ...this.defaults, ...query, ...value });
+    return { ...this.defaults, ...query, ...value };
   }
 };
