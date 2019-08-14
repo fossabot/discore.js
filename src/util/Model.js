@@ -26,7 +26,7 @@ module.exports = class Model {
    * @async
    */
   async getAll() {
-    const data = await this.Model.find({});
+    const data = await this._db.find({});
     if (!data) return new Collection();
     const col = new Collection();
     for (const val of data) {
@@ -145,7 +145,8 @@ module.exports = class Model {
     if (!this.hasOne(query)) return null;
     const data = this.findOne(query);
     this.collection.set(data._id, value);
-    this.Model.updateOne({ _id: data._id }, { $set: value });
+    const col = this._db.collection(this.name);
+    col.updateOne({ _id: data._id }, { $set: value });
     return value;
   }
 
