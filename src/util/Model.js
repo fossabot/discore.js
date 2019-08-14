@@ -27,10 +27,7 @@ module.exports = class Model {
    */
   async getAll() {
     const col = new Collection();
-    const data = await this._db
-      .collection(this.name)
-      .find({})
-      .toArray();
+    const data = await this.Model.find({});
     if (!data) return col;
     for (const val of data) {
       if ({}.hasOwnProperty.call(data, val)) {
