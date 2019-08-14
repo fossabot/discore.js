@@ -26,7 +26,7 @@ module.exports = class Model {
    * @async
    */
   async getAll() {
-    const data = await this._db.find({});
+    const data = await this._db.collection(this.name).find({});
     if (!data) return new Collection();
     const col = new Collection();
     for (const val of data) {
