@@ -26,9 +26,12 @@ module.exports = class Model {
    * @async
    */
   async getAll() {
-    const data = await this.Model.find({});
-    if (!data) return new Collection();
     const col = new Collection();
+    const data = await this._db
+      .collection(this.name)
+      .find({})
+      .toArray();
+    if (!data) return col;
     for (const val of data) {
       if ({}.hasOwnProperty.call(data, val)) {
         col.set(val._id, val._doc);
@@ -82,8 +85,7 @@ module.exports = class Model {
     }
     data = { ...this.defaults, ...data };
     if (!data._id) data._id = new mongoose.mongo.ObjectID();
-    const col = this._db.collection(this.name);
-    await col.insertOne(data);
+    await this._db.collection(this.name).insertOne(data);
     this.collection.set(data._id, data);
     return data;
   }
@@ -112,24 +114,16 @@ module.exports = class Model {
     if (!this.hasOne(query)) return null;
     const data = this.findOne(query);
     if (!data) return null;
-    await this._db.collection(this.name).deleteOne({ _id: data._id });
+    await this._db.collection(this.name).findOneAndDelete({ _id: data._id });
     this.collection.delete(data._id);
     return data;
   }
 
   async _updateOne(_id, value) {
-    const doc = await this.Model.findOne({ _id });
-    for (const key in value) {
-      if ({}.hasOwnProperty.call(value, key)) {
-        if (value[key] !== doc[key]) {
-          doc[key] = value[key];
-          doc.markModified(key);
-        }
-      }
-    }
-    await doc.save();
+    const doc = await this._db
+      .collection(this.name)
+      .findOneAndUpdate({ _id }, { $set: value }, { returnNewDocument: true });
     this.collection.set(doc._id, doc._doc);
-    return doc._doc;
   }
 
   /**
@@ -189,7 +183,7 @@ module.exports = class Model {
       query[prop] = value;
       value = newData;
     }
-    await this.insertOne({ ...this.defaults, ...query, ...value });
+    await this.insertOne({ ...query, ...value });
     return { ...this.defaults, ...query, ...value };
   }
 };
