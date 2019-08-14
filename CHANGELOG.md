@@ -1,9 +1,11 @@
 # Change Log
 
-## [0.4.0] - dev
+## [0.5.0] - dev
 
 ### Added
 
+- Command.noPermsRun() method.
+- Store.get() method.
 - Model.deleteOne() method.
 
 ### Changed
