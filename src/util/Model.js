@@ -82,8 +82,8 @@ module.exports = class Model {
     }
     data = { ...this.defaults, ...data };
     if (!data._id) data._id = new mongoose.mongo.ObjectID();
-    await this._db.collection(this.name).insertOne(data);
     this.collection.set(data._id, data);
+    await this._db.collection(this.name).insertOne(data);
     return data;
   }
 
@@ -119,7 +119,11 @@ module.exports = class Model {
   async _updateOne(_id, value) {
     const doc = await this._db
       .collection(this.name)
-      .findOneAndUpdate({ _id }, { $set: value }, { returnNewDocument: true });
+      .findOneAndUpdate(
+        { _id },
+        { $set: value },
+        { upsert: false, new: false }
+      );
     this.collection.set(doc._id, doc._doc);
   }
 
