@@ -53,7 +53,15 @@ module.exports = class extends Client {
     delete options.ignoreSelf;
     delete options.db;
     super(options);
-    const { cmdsIn, prefix, splitArgs } = thisOptions;
+    const { cmdsIn, prefix, splitArgs, db } = thisOptions;
+    if (
+      db !== undefined &&
+      db !== null &&
+      (typeof db !== 'object' || !(db instanceof DB))
+    ) {
+      const err = 'Db property must be instance of DB.';
+      throw new Error(err);
+    }
     if (
       (cmdsIn !== undefined &&
         typeof cmdsIn !== 'string' &&

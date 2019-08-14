@@ -45,7 +45,7 @@ module.exports = class DB {
   /**
    * @param {String} name
    * @param {Object} options
-   * @returns {String} name
+   * @returns {DB} db
    * @example db.addModel('modelname', {
    *  id: { type: String, default: undefined },
    *  messageCount: { type: Number, default: 0 },
@@ -74,6 +74,6 @@ module.exports = class DB {
     }
     this._models.push(name);
     this[name] = new Model(name.toLowerCase(), options, defaultOptions);
-    return name;
+    return this;
   }
 };
