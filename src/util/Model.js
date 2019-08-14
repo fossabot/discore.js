@@ -16,6 +16,10 @@ module.exports = class Model {
     this._Model = mongoose.model(name, this._Schema);
   }
 
+  /**
+   * @returns {Collection}
+   * @async
+   */
   async getAll() {
     const data = await this._Model.find({});
     if (!data) return new Collection();
@@ -26,19 +30,43 @@ module.exports = class Model {
     return col;
   }
 
+  /**
+   * @private
+   */
   async _toCollection() {
     this.collection = await this.getAll();
   }
 
+  /**
+   * @property {function|object|*} query
+   * @property {*} value
+   * @returns {Boolean}
+   * @example model.hasOne({ id: '1' });
+   * @example model.hasOne(value => value.id === '1');
+   * @example model.hasOne('id', '1');
+   */
   hasOne(query, value) {
     return !!this.collection.find(query, value);
   }
 
+  /**
+   * @property {function|object|*} query
+   * @property {*} value
+   * @returns {*}
+   * @example model.findOne({ id: '1' });
+   * @example model.findOne(value => value.id === '1');
+   * @example model.findOne('id', '1');
+   */
   findOne(query, value) {
     const data = this.collection.find(query, value);
     return data ? { ...this._defaults, ...data } : this._defaults;
   }
 
+  /**
+   * @property {*} data
+   * @returns {*} data
+   * @example model.insertOne({ id: '1' });
+   */
   insertOne(data) {
     if (typeof data !== 'object') {
       const text = `First argument must be an object. Instead got ${typeof data}`;
@@ -49,8 +77,15 @@ module.exports = class Model {
     const col = mongoose.connection.collection(this._name);
     this.collection.set(data._id, data);
     col.insertOne(data);
+    return data;
   }
 
+  /**
+   * @property {function|object|*} query
+   * @property {*} value
+   * @returns {*} Deleted data.
+   * @example model.deleteOne({ id: '1' });
+   */
   deleteOne(query, value) {
     if (typeof query === 'string') {
       if (typeof value === 'undefined') {
@@ -74,19 +109,28 @@ module.exports = class Model {
     return data;
   }
 
-  updateOne(query, dataOrValue, newData) {
+  /**
+   * @property {function|object|*} query
+   * @property {*} value Value or data.
+   * @property {*} newData
+   * @returns {*} Updated data.
+   * @example model.updateOne({ id: '1' }, { id: '2' });
+   * @example model.updateOne(value => value.id === '1', { id: '2' });
+   * @example model.updateOne('id', '1', { id: '2' });
+   */
+  updateOne(query, value, newData) {
     if (typeof query === 'string') {
-      if (typeof dataOrValue === 'undefined') {
+      if (typeof value === 'undefined') {
         const text = 'Value must be specified.';
         throw new Error(text);
       }
       const prop = query;
       query = {};
-      query[prop] = dataOrValue;
-      dataOrValue = newData;
+      query[prop] = value;
+      value = newData;
     }
-    if (typeof dataOrValue !== 'object') {
-      const text = `Data must be an object. Instead got ${typeof dataOrValue}`;
+    if (typeof value !== 'object') {
+      const text = `Data must be an object. Instead got ${typeof value}`;
       throw new TypeError(text);
     }
     if (typeof query !== 'object' && typeof query !== 'function') {
@@ -95,29 +139,35 @@ module.exports = class Model {
     }
     if (!this.hasOne(query)) return null;
     const data = this.findOne(query);
-    this.collection.set(data._id, {
-      ...this._defaults,
-      ...data,
-      ...dataOrValue,
-    });
-    this._Model.updateOne({ _id: data._id }, { $set: dataOrValue });
-    return true;
+    this.collection.set(data._id, value);
+    this._Model.updateOne({ _id: data._id }, { $set: value });
+    return value;
   }
 
-  upsertOne(query, dataOrValue, newData) {
-    const updated = this.updateOne(query, dataOrValue, newData);
-    if (updated) return true;
+  /**
+   * @property {function|object|*} query
+   * @property {*} value Value or data.
+   * @property {*} newData
+   * @returns {*} Updated / Inserted data.
+   * @example model.upsertOne({ id: '1' }, { id: '2' });
+   * @example model.upsertOne(value => value.id === '1', { id: '2' });
+   * @example model.upsertOne('id', '1', { id: '2' });
+   */
+  upsertOne(query, value, newData) {
+    const updated = this.updateOne(query, value, newData);
+    if (updated) return updated;
     if (typeof query === 'function') query = {};
     if (typeof query === 'string') {
-      if (typeof dataOrValue === 'undefined') {
+      if (typeof value === 'undefined') {
         const text = 'Value must be specified.';
         throw new Error(text);
       }
       const prop = query;
       query = {};
-      query[prop] = dataOrValue;
-      dataOrValue = newData;
+      query[prop] = value;
+      value = newData;
     }
-    this.insertOne({ ...query, ...dataOrValue });
+    this.insertOne({ ...this._defaults, ...query, ...value });
+    return { ...this._defaults, ...query, ...value };
   }
 };
