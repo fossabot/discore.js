@@ -30,7 +30,9 @@ module.exports = class Model {
     if (!data) return new Collection();
     const col = new Collection();
     for (const val of data) {
-      col.set(val._id, val._doc);
+      if ({}.hasOwnProperty.call(data, val)) {
+        col.set(val._id, val._doc);
+      }
     }
     return col;
   }
@@ -80,8 +82,7 @@ module.exports = class Model {
     data = { ...this.defaults, ...data };
     if (!data._id) data._id = new mongoose.mongo.ObjectID();
     const col = this._db.collection(this.name);
-    this.collection.set(data._id, data);
-    col.insertOne(data);
+    col.insertOne(data).then(() => this.collection.set(data._id, data));
     return data;
   }
 
@@ -108,9 +109,10 @@ module.exports = class Model {
     if (!this.hasOne(query)) return null;
     const data = this.findOne(query);
     if (!data) return null;
-    this.collection.delete(data._id);
-    const col = this._db.collection(this.name);
-    col.deleteOne({ _id: data._id });
+    this._db
+      .collection(this.name)
+      .deleteOne({ _id: data._id })
+      .then(() => this.collection.delete(data._id));
     return data;
   }
 
@@ -118,10 +120,13 @@ module.exports = class Model {
     const doc = await this.Model.findOne({ _id });
     for (const key in value) {
       if ({}.hasOwnProperty.call(value, key)) {
-        if (value[key] !== doc[key]) doc[key] = value[key];
+        if (value[key] !== doc[key]) {
+          doc[key] = value[key];
+          doc.markModified(key);
+        }
       }
     }
-    doc.save();
+    doc.save().then(() => this.collection.set(doc._id, doc._doc));
   }
 
   /**
@@ -154,7 +159,6 @@ module.exports = class Model {
     }
     if (!this.hasOne(query)) return null;
     const data = this.findOne(query);
-    this.collection.set(data._id, { ...data, ...value });
     this._updateOne(data._id, value);
     return value;
   }
