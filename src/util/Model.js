@@ -44,7 +44,7 @@ module.exports = class Model {
       const text = `First argument must be an object. Instead got ${typeof data}`;
       throw new TypeError(text);
     }
-    data = { ...this._defaults, data };
+    data = { ...this._defaults, ...data };
     if (!data._id) data._id = new mongoose.mongo.ObjectID();
     const col = mongoose.connection.collection(this._name);
     this.collection.set(data._id, data);
@@ -60,10 +60,6 @@ module.exports = class Model {
       const prop = query;
       query = {};
       query[prop] = value;
-    }
-    if (typeof dataOrValue !== 'object') {
-      const text = `Data must be an object. Instead got ${typeof dataOrValue}`;
-      throw new TypeError(text);
     }
     if (typeof query !== 'object' && typeof query !== 'function') {
       const text = `First argument must be an object, function or string. Instead got ${typeof query}.`;
