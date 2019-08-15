@@ -28,8 +28,32 @@ module.exports = class DB {
       family: 4,
     };
     options = { ...defaultOptions, ...options };
+    this.url = url;
+    this.defaultOptions = defaultOptions;
+    this.options = options;
     mongoose.connect(url, options);
     mongoose.Promise = global.Promise;
+  }
+
+  /**
+   * @returns {*}
+   */
+  close() {
+    return this.connection.close();
+  }
+
+  /**
+   * @param {String} url
+   * @param {Object} options
+   * @returns {*}
+   */
+  open(url, options = {}) {
+    if (!url) url = this.url;
+    if (typeof url !== 'string') {
+      throw new TypeError('DB uri must be a string.');
+    }
+    this.url = url;
+    return this.connection.openUri(url, { ...this.defaultOptions, ...options });
   }
 
   /**
