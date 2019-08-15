@@ -10,7 +10,11 @@ const reactionControl = class extends Event {
   async run(event) {
     if (!this.client) return;
     if (!event.t) return;
-    if (event.t !== 'MESSAGE_REACTION_ADD') return;
+    if (
+      !['MESSAGE_REACTION_ADD', 'MESSAGE_REACTION_REMOVE'].includes(event.t)
+    ) {
+      return;
+    }
     if (!event.d) return;
     if (!event.d.message_id) return;
     if (!this.client._private.sentPages.has(event.d.message_id)) return;
@@ -52,7 +56,7 @@ const reactionControl = class extends Event {
     if (type === 'next') pages.curPage += 1;
     this.client._private.sentPages.set(message.id, pages);
     message
-      .edit(pages.pages.pages[pages.curPage])
+      .edit(pages.pages.pages[pages.curPage].msg)
       .catch(e => this.client.emit('error', e));
   }
 };
