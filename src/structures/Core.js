@@ -2,6 +2,7 @@ const { Client } = require('discord.js');
 const path = require('path');
 const Store = require('./Store');
 const PermissionLevels = require('./PermissionLevels');
+const Collection = require('../util/Collection');
 const DB = require('./DB');
 const UniqueId = require('../util/UniqueId');
 
@@ -97,6 +98,7 @@ module.exports = class extends Client {
      * @private
      */
     this._private = {};
+    this._private.sentPages = new Collection();
     this._private.typing = thisOptions.typing;
     this._private.eventsFolder = thisOptions.eventsFolder;
     this._private.commandsFolder = thisOptions.commandsFolder;
