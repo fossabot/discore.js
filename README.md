@@ -430,6 +430,8 @@ new Core({
 #### Methods
 
 - `addModel()`
+- `open()` ( Open connection )
+- `close()` ( Close connection )
 
 #### Properties
 

@@ -1,5 +1,22 @@
 # Change Log
 
+## [0.7.0] - dev
+
+### Added
+
+- DB#open method.
+- DB#close method.
+
+- Pages structure.
+
+### Changed
+
+- Minor changes.
+
+### Fixed
+
+- DB collections & models.
+
 ## [0.6.4] - 2019-08-14
 
 ### Added
