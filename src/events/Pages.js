@@ -32,7 +32,7 @@ const reactionControl = class extends Event {
     if (!reaction) return;
     reaction.users.set(user.id, user);
     const pages = this.client._private.sentPages.get(message.id);
-    if (!pages.filter(reaction, user)) return;
+    if (pages.filter(reaction, user) !== true) return;
     let type;
     if (
       (reaction.emoji.id || event.d.emoji.name) === pages.pages.emojis.prevPage
