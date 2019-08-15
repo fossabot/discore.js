@@ -47,9 +47,6 @@ module.exports = class Pages {
       throw new TypeError('Channel argument must be an object.');
     }
     if ({}.hasOwnProperty.call(channel, 'channel')) ({ channel } = channel);
-    if (!{}.hasOwnProperty.call(channel, 'send')) {
-      throw new Error('Channel argument must be channel.');
-    }
     const page = this.pages[0];
     const sentMsg = await channel.send(page.msg);
     this.client._private.sentPages.set(sentMsg.id, {
