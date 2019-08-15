@@ -85,11 +85,11 @@ module.exports = class extends Client {
       splitArgs !== 'string' &&
       splitArgs !== 'object' &&
       typeof splitArgs === 'object' &&
-      !{}.hasOwnProperty.call(splitArgs, 'test')
+      typeof splitArgs.test !== 'function'
     ) {
-      const err =
-        'SplitArgs option must be a string, undefined, null or regular expression.';
-      throw new TypeError(err);
+      throw new TypeError(
+        'SplitArgs option must be a string, undefined, null or regular expression.'
+      );
     }
     this.public = {};
     /**

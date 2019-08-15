@@ -17,6 +17,7 @@ const reactionControl = class extends Event {
     if (!event.d.channel_id) return;
     if (!event.d.emoji) return;
     if (!event.d.user_id) return;
+    if (event.d.user_id === this.client.user.id) return;
     const user = this.client.users.get(event.d.user_id);
     if (!user) return;
     const emoji = event.d.emoji.id

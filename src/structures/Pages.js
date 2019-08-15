@@ -1,5 +1,5 @@
 const defaultOptions = {
-  filter: () => false,
+  filter: () => true,
   prevPage: '⏮',
   nextPage: '⏭',
 };
@@ -52,7 +52,7 @@ module.exports = class Pages {
     this.client._private.sentPages.set(sentMsg.id, {
       msgId: sentMsg.id,
       pages: this,
-      curPage: page,
+      curPage: page.page,
       emojis: this.emojis,
       filter: this.filter,
     });
