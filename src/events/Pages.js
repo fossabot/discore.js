@@ -17,7 +17,6 @@ const reactionControl = class extends Event {
     if (!event.d.channel_id) return;
     if (!event.d.emoji) return;
     if (!event.d.user_id) return;
-    const pages = this.client._private.sentPages.get(message.id);
     const user = this.client.users.get(event.d.user_id);
     if (!user) return;
     const emoji = event.d.emoji.id
@@ -31,6 +30,7 @@ const reactionControl = class extends Event {
     const reaction = message.reactions.get(emoji);
     if (!reaction) return;
     reaction.users.set(user.id, user);
+    const pages = this.client._private.sentPages.get(message.id);
     if (!pages.filter(reaction, user)) return;
     let type;
     if (
