@@ -57,8 +57,8 @@ module.exports = class Pages {
       filter: this.filter,
     });
     try {
-      await sentMsg.addReaction(this.emojis.prevPage).catch(() => {});
-      sentMsg.addReaction(this.emojis.nextPage).catch(() => {});
+      await sentMsg.react(this.emojis.prevPage).catch(() => {});
+      sentMsg.react(this.emojis.nextPage).catch(() => {});
     } catch (e) {
       this.client.emit('error', e);
     }
