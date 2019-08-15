@@ -7,4 +7,5 @@ module.exports = {
   DB: require('./structures/DB'),
   Embed: require('./structures/Embed'),
   PermissionLevels: require('./structures/PermissionLevels'),
+  Pages: require('./structures/Pages'),
 };

@@ -17,6 +17,7 @@ const reactionControl = class extends Event {
     if (!event.d.channel_id) return;
     if (!event.d.emoji) return;
     if (!event.d.user_id) return;
+    const pages = this.client._private.sentPages.get(message.id);
     const user = this.client.users.get(event.d.user_id);
     if (!user) return;
     const emoji = event.d.emoji.id
@@ -30,6 +31,7 @@ const reactionControl = class extends Event {
     const reaction = message.reactions.get(emoji);
     if (!reaction) return;
     reaction.users.set(user.id, user);
+    if (!pages.filter(reaction, user)) return;
     let type;
     if (
       (reaction.emoji.id || event.d.emoji.name) === pages.pages.emojis.prevPage
@@ -47,7 +49,6 @@ const reactionControl = class extends Event {
     }
     if (type === 'prev') pages.curPage -= 1;
     if (type === 'next') pages.curPage += 1;
-    const pages = this.client._private.sentPages.get(message.id);
     this.client._private.sentPages.set(message.id, pages);
     message
       .edit(pages.pages.pages[pages.curPage])

@@ -153,10 +153,6 @@ module.exports = class extends Event {
 - `reload()`
 - `toString()`
 
-#### Included events
-
-- Command Handler
-
 ### Commands
 
 Commands are placed in `.\commands\` (**commandsFolder** option).
@@ -306,6 +302,53 @@ new Core(config);
 #### Properties
 
 - `length`
+
+### Pages
+
+Their structure:
+
+```js
+const { Pages, Embed } = require('discore.js');
+
+const pages = new Pages(this.client, {
+  prevPage: '⏮', // Emoji which is used to switch to the previus page.
+  nextPage: '⏭', // Emoji which is used to switch to the next page.
+  filter: (reaction, user) => user.id === message.author.id, // Example.
+});
+
+const embed = new Embed()
+  .setTitle('Embedded Page!')
+  .setDescription('Yay! You can add embedded page!')
+  .setFooter('Page: 2');
+
+pages
+  .addPage('Hey! You are on the first page!')
+  .add(embed)
+  .add('`Third and the last page.`');
+
+const msg = await pages.send(message.channel);
+
+const timeout = 5000; // 5000 milliseconds = 5 seconds.
+// To turn off pages just delete the message!
+// Example:
+msg.delete(timeout);
+// or
+setTimeout(() => msg.delete(), timeout);
+```
+
+#### Methods
+
+- `addPage()`
+- `add()`
+- `send()`
+
+#### Properties
+
+- `client`
+- `options`
+- `emojis`
+- `pages`
+- `filter`
 
 ### Embed ( RichEmbed )
 

@@ -39,7 +39,7 @@ module.exports = class Pages {
 
   /**
    * @param {*} channel The channel where to send those Pages.
-   * @returns {Pages}
+   * @returns {*} Message that was sent.
    * @async
    */
   async send(channel) {
@@ -57,6 +57,7 @@ module.exports = class Pages {
       pages: this,
       curPage: page,
       emojis: this.emojis,
+      filter: this.filter,
     });
     try {
       await sentMsg.addReaction(this.emojis.prevPage).catch(() => {});
@@ -64,6 +65,6 @@ module.exports = class Pages {
     } catch (e) {
       this.client.emit('error', e);
     }
-    return this;
+    return sentMsg;
   }
 };
