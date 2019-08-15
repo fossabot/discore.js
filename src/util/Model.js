@@ -30,7 +30,10 @@ module.exports = class Model {
     const data = await this.Model.find({});
     if (!data) return col;
     for (const val of data) {
-      col.set(val._id, val._doc);
+      col.set(val._id.toHexString(), {
+        ...val._doc,
+        _id: val._id.toHexString(),
+      });
     }
     return col;
   }
@@ -64,6 +67,9 @@ module.exports = class Model {
    */
   findOne(query, value) {
     const data = this.collection.find(query, value);
+    if (data && data._id) {
+      data._id = new mongoose.mongo.ObjectID(data._id);
+    }
     return data ? { ...this.defaults, ...data } : this.defaults;
   }
 
@@ -112,10 +118,8 @@ module.exports = class Model {
     if (!this.hasOne(query)) return null;
     const data = this.findOne(query);
     if (!data) return null;
-    this.collection.delete(data._id);
-    await this._db
-      .collection(this.name)
-      .findOneAndDelete({ _id: new mongoose.mongo.ObjectID(data._id) });
+    this.collection.delete(data._id.toHexString());
+    await this._db.collection(this.name).findOneAndDelete({ _id: data._id });
     return data;
   }
 
@@ -150,18 +154,15 @@ module.exports = class Model {
     }
     if (!this.hasOne(query)) return null;
     const data = this.findOne(query);
-    this.collection.set(data._id, {
+    this.collection.set(data._id.toHexString(), {
       ...data,
       ...value,
-      _id: data._id,
+      _id: data._id.toHexString(),
     });
     await this._db
       .collection(this.name)
-      .findOneAndUpdate(
-        { _id: new mongoose.mongo.ObjectID(data._id) },
-        { $set: value }
-      );
-    return { ...data, _id: new mongoose.mongo.ObjectID(data._id) };
+      .findOneAndUpdate({ _id: data._id }, { $set: value });
+    return data;
   }
 
   /**
