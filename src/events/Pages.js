@@ -30,7 +30,9 @@ const reactionControl = class extends Event {
     if (!emoji) return;
     const channel = this.client.channels.get(event.d.channel_id);
     if (!channel) return;
-    const message = await channel.fetchMessage(event.d.message_id);
+    const message = await channel
+      .fetchMessage(event.d.message_id)
+      .catch(() => {});
     if (!message) return;
     const reaction = message.reactions.get(emoji);
     if (!reaction) return;
@@ -54,9 +56,9 @@ const reactionControl = class extends Event {
     }
     if (type === 'prev') pages.curPage -= 1;
     if (type === 'next') pages.curPage += 1;
-    this.client._private.sentPages.set(message.id, pages);
     message
       .edit(pages.pages.pages[pages.curPage].msg)
+      .then(() => this.client._private.sentPages.set(message.id, pages))
       .catch(e => this.client.emit('error', e));
   }
 };
