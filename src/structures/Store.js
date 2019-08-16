@@ -138,6 +138,7 @@ module.exports = class Store extends Collection {
               } else {
                 const prop = new Prop[key](this.client, this, file.path);
                 prop._private = { parents };
+                prop.categories = parents.reverse();
                 this.set(prop.id, prop);
               }
             }

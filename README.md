@@ -153,6 +153,10 @@ module.exports = class extends Event {
 - `reload()`
 - `toString()`
 
+#### Properties
+
+- `categories`
+
 ### Commands
 
 Commands are placed in `.\commands\` (**commandsFolder** option).
@@ -228,6 +232,10 @@ module.exports = class extends Command {
 - `unload()`
 - `reload()`
 - `toString()`
+
+#### Properties
+
+- `categories`
 
 ##### Method Examples
 
