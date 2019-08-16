@@ -13,11 +13,6 @@ module.exports = class Config extends Collection {
   constructor(client, defaults) {
     super();
     this.client = client;
-    for (const key in defaults) {
-      if ({}.hasOwnProperty.call(defaults, key)) {
-        if (!settings.includes(key)) delete defaults[key];
-      }
-    }
     this.defaults = defaults;
   }
 
