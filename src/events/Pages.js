@@ -30,14 +30,13 @@ const reactionControl = class extends Event {
     if (!emoji) return;
     const channel = this.client.channels.get(event.d.channel_id);
     if (!channel) return;
-    const message = await channel
-      .fetchMessage(event.d.message_id)
-      .catch(() => {});
+    const pages = this.client._private.sentPages.get(event.d.message_id);
+    if (!pages) return;
+    const message = pages.message;
     if (!message) return;
     const reaction = message.reactions.get(emoji);
     if (!reaction) return;
     reaction.users.set(user.id, user);
-    const pages = this.client._private.sentPages.get(message.id);
     if (pages.filter(reaction, user) !== true) return;
     let type;
     if (
@@ -56,10 +55,10 @@ const reactionControl = class extends Event {
     }
     if (type === 'prev') pages.curPage -= 1;
     if (type === 'next') pages.curPage += 1;
-    message
+    await message
       .edit(pages.pages.pages[pages.curPage].msg)
-      .then(() => this.client._private.sentPages.set(message.id, pages))
       .catch(e => this.client.emit('error', e));
+    this.client._private.sentPages.set(message.id, pages);
   }
 };
 

@@ -51,6 +51,7 @@ module.exports = class Pages {
     const page = this.pages[0];
     const sentMsg = await channel.send(page.msg);
     this.client._private.sentPages.set(sentMsg.id, {
+      msg: sentMsg,
       msgId: sentMsg.id,
       pages: this,
       curPage: page.page,
