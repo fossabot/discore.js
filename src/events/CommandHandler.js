@@ -32,8 +32,8 @@ module.exports = class extends Event {
         matched = prefix;
       } else if (_prefix instanceof RegExp) {
         let __prefix = _prefix;
-        if (!_prefix.source.startsWith('$')) {
-          __prefix = new RegExp(`$${_prefix.source}`, _prefix.flags);
+        if (!_prefix.source.startsWith('^')) {
+          __prefix = new RegExp(`^${_prefix.source}`, _prefix.flags);
         }
         matched = content.match(__prefix);
         if (matched) matched = matched[0];
