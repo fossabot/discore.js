@@ -60,14 +60,14 @@ module.exports = class Config extends Collection {
           } else {
             value.prefix = [thisPrefix, ...prefix];
           }
-        } else if (
-          typeof thisPrefix === 'object' &&
-          thisPrefix instanceof Array
-        ) {
-          value.prefix = [...thisPrefix, prefix];
-        } else {
-          value.prefix = [thisPrefix, prefix];
         }
+      } else if (
+        typeof thisPrefix === 'object' &&
+        thisPrefix instanceof Array
+      ) {
+        value.prefix = [...thisPrefix, prefix];
+      } else {
+        value.prefix = [thisPrefix, prefix];
       }
     }
     return super.set(key, { ...this.defaults, ...value, _settingKey: key });

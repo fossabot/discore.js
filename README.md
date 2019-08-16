@@ -95,6 +95,12 @@ this.client.config.guild.set('guild_id', {
   ignoreSelf: true,
   ignoreBots: true,
 });
+
+// If you want to leave current default prefixes
+// and add new one then you can use add() method.
+this.client.config.guild.add('guild_id', {
+  prefix: '.', // Example.
+});
 ```
 
 #### Methods
