@@ -112,39 +112,24 @@ module.exports = class Store extends Collection {
         }
         const Prop = require(file.path);
         if (typeof Prop !== 'function') {
-          if (!{}.hasOwnProperty.call(Prop, 'filenameParent')) {
-            const parentName = path
-              .basename(file.path)
-              .split('.')
-              .slice(0, -1)
-              .join('.');
-            parents.unshift(parentName);
-          }
-
+          const parentName = path
+            .basename(file.path)
+            .split('.')
+            .slice(0, -1)
+            .join('.');
+          parents.unshift(parentName);
           for (const key in Prop) {
             if ({}.hasOwnProperty.call(Prop, key)) {
-              if (
-                key === 'filenameParent' &&
-                typeof Prop[key] === 'boolean' &&
-                Prop[key] === true
-              ) {
-                const parentName = path
-                  .basename(file.path)
-                  .split('.')
-                  .slice(0, -1)
-                  .join('.');
-                parents.unshift(parentName);
-                delete Prop[key];
-              } else {
-                const prop = new Prop[key](this.client, this, file.path);
-                prop._private = { parents };
-                this.set(prop.id, prop);
-              }
+              const prop = new Prop[key](this.client, this, file.path);
+              prop._private = { parents };
+              prop.categories = parents.reverse();
+              this.set(prop.id, prop);
             }
           }
         } else {
           const prop = new Prop(this.client, this, file.path);
           prop._private = { parents };
+          prop.categories = parents.reverse();
           this.set(prop.id, prop);
         }
       });

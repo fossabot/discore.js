@@ -1,5 +1,31 @@
 # Change Log
 
+## [0.7.0] - 2019-08-16
+
+### Added
+
+- Core#spaceAfterPrefix option.
+
+- Per-guild configuration.
+
+- Event#categories property.
+- Command#categories property.
+
+- Pages structure.
+
+- DB#open method.
+- DB#close method.
+
+### Changed
+
+- Now prefixes can be string, regular expression or array of RegExps or strings.
+
+- Minor changes.
+
+### Fixed
+
+- DB collections & models.
+
 ## [0.6.4] - 2019-08-14
 
 ### Added

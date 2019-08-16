@@ -67,18 +67,39 @@ new Core({
 ```js
 const { Core } = require('discore.js');
 new Core({
-  typing: false,
   eventsFolder: 'events',
   commandsFolder: 'commands',
   token: null,
+  // To make multiple prefixes you can make an array
+  // Example: ['!', '.']
   prefix: undefined,
+  spaceAfterPrefix: false,
   splitArgs: ' ',
-  cmdsIn: ['text'],
   ignoreCase: true,
   permLevels: new PermissionLevels(),
   ignoreSelf: true,
   ignoreBots: true,
   db: null,
+});
+```
+
+- Per-guild configuration.
+
+```js
+this.client.config.guild.set('guild_id', {
+  // Default settings:
+  prefix: undefined,
+  splitArgs: ' ',
+  ignoreCase: true,
+  permLevels: new PermissionLevels(),
+  ignoreSelf: true,
+  ignoreBots: true,
+});
+
+// If you want to leave current default prefixes
+// and add new one then you can use add() method.
+this.client.config.guild.add('guild_id', {
+  prefix: '.', // Example.
 });
 ```
 
@@ -153,9 +174,9 @@ module.exports = class extends Event {
 - `reload()`
 - `toString()`
 
-#### Included events
+#### Properties
 
-- Command Handler
+- `categories`
 
 ### Commands
 
@@ -233,6 +254,10 @@ module.exports = class extends Command {
 - `reload()`
 - `toString()`
 
+#### Properties
+
+- `categories`
+
 ##### Method Examples
 
 ```js
@@ -306,6 +331,56 @@ new Core(config);
 #### Properties
 
 - `length`
+
+### Pages
+
+Their structure:
+
+```js
+const { Pages, Embed } = require('discore.js');
+
+const pages = new Pages(this.client, {
+  prevPage: '⏮', // Emoji which is used to switch to the previus page.
+  nextPage: '⏭', // Emoji which is used to switch to the next page.
+  filter: (reaction, user) => user.id === message.author.id, // Example.
+});
+
+const embed = new Embed()
+  .setTitle('Embedded Page!')
+  .setDescription('Yay! You can add embedded page!')
+  .setFooter('Page: 2');
+
+pages
+  // AddPage method adds only one page.
+  .addPage('Hey! You are on the first page!')
+  // With add method you can add one page.
+  .add(embed)
+  // Or tons of pages!
+  .add('`Third page.`', '`Fourth and the last page.`');
+
+const msg = await pages.send(message.channel);
+
+const timeout = 5000; // 5000 milliseconds = 5 seconds.
+// To turn off pages just delete the message!
+// Example:
+msg.delete(timeout);
+// or
+setTimeout(() => msg.delete(), timeout);
+```
+
+#### Methods
+
+- `addPage()`
+- `add()`
+- `send()`
+
+#### Properties
+
+- `client`
+- `options`
+- `emojis`
+- `pages`
+- `filter`
 
 ### Embed ( RichEmbed )
 
@@ -387,6 +462,8 @@ new Core({
 #### Methods
 
 - `addModel()`
+- `open()` ( Open connection )
+- `close()` ( Close connection )
 
 #### Properties
 

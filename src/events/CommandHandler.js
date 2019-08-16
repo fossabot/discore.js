@@ -12,29 +12,42 @@ module.exports = class extends Event {
     if (!message.channel) return;
     if (!message.author) return;
     const {
-      cmdsIn,
       ignoreCase,
       prefix,
       splitArgs,
       ignoreBots,
       ignoreSelf,
-    } = this.client;
+      spaceAfterPrefix,
+    } = this.client.config.guild.get(message.guild ? message.guild.id : null);
     if (ignoreBots && message.author.bot) return;
     if (ignoreSelf && message.author.id === this.client.user.id) return;
-    if (!cmdsIn.includes(message.channel.type)) return;
     let { content } = message;
     if (ignoreCase) content = content.toLowerCase();
-    let matched = prefix;
-    if (typeof prefix === 'string') {
-      if (!content.startsWith(prefix)) return;
-    } else {
-      matched = content.match(prefix);
-      if (!matched) return;
-      matched = matched[0].length;
+    let prefixes = prefix;
+    let matched = null;
+    if (!(prefixes instanceof Array)) prefixes = [prefixes];
+    for (const _prefix of prefixes) {
+      if (matched) break;
+      if (typeof _prefix === 'string' && content.startsWith(_prefix)) {
+        matched = prefix;
+      } else if (_prefix instanceof RegExp) {
+        let __prefix = _prefix;
+        if (!_prefix.source.startsWith('^')) {
+          __prefix = new RegExp(`^${_prefix.source}`, _prefix.flags);
+        }
+        matched = content.match(__prefix);
+        if (matched) matched = matched[0];
+      }
     }
-    let args = message.content;
+    if (!matched) return;
+    if (typeof matched === 'string' && !content.startsWith(matched)) return;
+    if (matched instanceof Array) matched = matched[0];
+    let args = message.content.slice(matched.length);
     if (splitArgs) args = args.split(splitArgs);
-    let cmd = args.shift().slice(matched.length);
+    let cmd = args.shift();
+    if (!cmd && spaceAfterPrefix && args[0]) {
+      cmd = args.shift();
+    }
     if (ignoreCase) cmd = cmd.toLowerCase();
     const filter = e => e.key === cmd || e.aliases.includes(cmd);
     const command = this.client.commands.find(filter);
