@@ -67,18 +67,30 @@ new Core({
 ```js
 const { Core } = require('discore.js');
 new Core({
-  typing: false,
   eventsFolder: 'events',
   commandsFolder: 'commands',
   token: null,
   prefix: undefined,
   splitArgs: ' ',
-  cmdsIn: ['text'],
   ignoreCase: true,
   permLevels: new PermissionLevels(),
   ignoreSelf: true,
   ignoreBots: true,
   db: null,
+});
+```
+
+- Per-guild configuration.
+
+```js
+this.client.config.guild.set('guild_id', {
+  // Default settings:
+  prefix: undefined,
+  splitArgs: ' ',
+  ignoreCase: true,
+  permLevels: new PermissionLevels(),
+  ignoreSelf: true,
+  ignoreBots: true,
 });
 ```
 

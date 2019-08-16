@@ -12,16 +12,14 @@ module.exports = class extends Event {
     if (!message.channel) return;
     if (!message.author) return;
     const {
-      cmdsIn,
       ignoreCase,
       prefix,
       splitArgs,
       ignoreBots,
       ignoreSelf,
-    } = this.client;
+    } = this.client.config.guild.get(message.guild ? message.guild.id : null);
     if (ignoreBots && message.author.bot) return;
     if (ignoreSelf && message.author.id === this.client.user.id) return;
-    if (!cmdsIn.includes(message.channel.type)) return;
     let { content } = message;
     if (ignoreCase) content = content.toLowerCase();
     let matched = prefix;
@@ -30,11 +28,11 @@ module.exports = class extends Event {
     } else {
       matched = content.match(prefix);
       if (!matched) return;
-      matched = matched[0].length;
+      matched = matched[0];
     }
-    let args = message.content;
+    let args = message.content.slice(matched.length);
     if (splitArgs) args = args.split(splitArgs);
-    let cmd = args.shift().slice(matched.length);
+    let cmd = args.shift();
     if (ignoreCase) cmd = cmd.toLowerCase();
     const filter = e => e.key === cmd || e.aliases.includes(cmd);
     const command = this.client.commands.find(filter);

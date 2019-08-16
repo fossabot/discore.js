@@ -5,15 +5,14 @@ const PermissionLevels = require('./PermissionLevels');
 const Collection = require('../util/Collection');
 const DB = require('./DB');
 const UniqueId = require('../util/UniqueId');
+const Config = require('./Config');
 
 const defaultOptions = {
-  typing: false,
   eventsFolder: 'events',
   commandsFolder: 'commands',
   token: null,
   prefix: undefined,
   splitArgs: ' ',
-  cmdsIn: ['text'],
   ignoreCase: true,
   permLevels: new PermissionLevels(),
   ignoreBots: true,
@@ -28,33 +27,29 @@ module.exports = class extends Client {
   constructor(options = {}) {
     options = { ...defaultOptions, ...options };
     const thisOptions = {
-      typing: options.typing,
       eventsFolder: options.eventsFolder,
       commandsFolder: options.commandsFolder,
       token: options.token,
       prefix: options.prefix,
       splitArgs: options.splitArgs,
-      cmdsIn: options.cmdsIn,
       ignoreCase: options.ignoreCase,
       permLevels: options.permLevels,
       ignoreBots: options.ignoreBots,
       ignoreSelf: options.ignoreSelf,
       db: options.db,
     };
-    delete options.typing;
     delete options.eventsFolder;
     delete options.commandsFolder;
     delete options.token;
     delete options.prefix;
     delete options.splitArgs;
-    delete options.cmdsIn;
     delete options.ignoreCase;
     delete options.permLevels;
     delete options.ignoreBots;
     delete options.ignoreSelf;
     delete options.db;
     super(options);
-    const { cmdsIn, prefix, splitArgs, db } = thisOptions;
+    const { prefix, splitArgs, db } = thisOptions;
     if (
       db !== undefined &&
       db !== null &&
@@ -63,17 +58,6 @@ module.exports = class extends Client {
       const err = 'Db property must be instance of DB.';
       throw new Error(err);
     }
-    if (
-      (cmdsIn !== undefined &&
-        typeof cmdsIn !== 'string' &&
-        typeof cmdsIn !== 'object') ||
-      {}.hasOwnProperty.call(cmdsIn, 'join')
-    ) {
-      const err = 'CmdsIn option must be undefined, string or array.';
-      throw new TypeError(err);
-    }
-    if (cmdsIn === undefined) thisOptions.cmdsIn = [];
-    if (typeof cmdsIn === 'string') thisOptions.cmdsIn = [cmdsIn];
     if (prefix === undefined) thisOptions.prefix = '';
     if (typeof prefix === 'object' && !{}.hasOwnProperty.call(prefix, 'test')) {
       const err = 'Prefix option must be a string or regular expression.';
@@ -99,15 +83,14 @@ module.exports = class extends Client {
      */
     this._private = {};
     this._private.sentPages = new Collection();
-    this._private.typing = thisOptions.typing;
     this._private.eventsFolder = thisOptions.eventsFolder;
     this._private.commandsFolder = thisOptions.commandsFolder;
     this._private.fullpath = require.main.filename;
     this._private.filepath = path.basename(require.main.filename);
     this._private.dirpath = path.dirname(require.main.filename);
+    this.config = { guild: new Config(this, options) };
     this.prefix = thisOptions.prefix;
     this.splitArgs = thisOptions.splitArgs;
-    this.cmdsIn = thisOptions.cmdsIn;
     this.ignoreCase = thisOptions.ignoreCase;
     this.permLevels = thisOptions.permLevels;
     this.ignoreBots = thisOptions.ignoreBots;
