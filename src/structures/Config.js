@@ -25,9 +25,14 @@ module.exports = class Config extends Collection {
     }
     const { prefix, splitArgs } = value;
     if (prefix === undefined) value.prefix = '';
-    if (typeof prefix === 'object' && !{}.hasOwnProperty.call(prefix, 'test')) {
-      const err = 'Prefix option must be a string or regular expression.';
-      throw new TypeError(err);
+    if (
+      typeof prefix === 'object' &&
+      !(prefix instanceof RegExp) &&
+      !(prefix instanceof Array)
+    ) {
+      throw new TypeError(
+        'Prefix option must be a string or regular expression or array.'
+      );
     }
     if (
       splitArgs !== undefined &&

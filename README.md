@@ -70,7 +70,10 @@ new Core({
   eventsFolder: 'events',
   commandsFolder: 'commands',
   token: null,
+  // To make multiple prefixes you can make an array
+  // Example: ['!', '.']
   prefix: undefined,
+  spaceAfterPrefix: false,
   splitArgs: ' ',
   ignoreCase: true,
   permLevels: new PermissionLevels(),

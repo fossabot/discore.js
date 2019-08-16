@@ -12,6 +12,7 @@ const defaultOptions = {
   commandsFolder: 'commands',
   token: null,
   prefix: undefined,
+  spaceAfterPrefix: false,
   splitArgs: ' ',
   ignoreCase: true,
   permLevels: new PermissionLevels(),
@@ -31,6 +32,7 @@ module.exports = class extends Client {
       commandsFolder: options.commandsFolder,
       token: options.token,
       prefix: options.prefix,
+      spaceAfterPrefix: options.spaceAfterPrefix,
       splitArgs: options.splitArgs,
       ignoreCase: options.ignoreCase,
       permLevels: options.permLevels,
@@ -42,6 +44,7 @@ module.exports = class extends Client {
     delete options.commandsFolder;
     delete options.token;
     delete options.prefix;
+    delete options.spaceAfterPrefix;
     delete options.splitArgs;
     delete options.ignoreCase;
     delete options.permLevels;
@@ -59,9 +62,14 @@ module.exports = class extends Client {
       throw new Error(err);
     }
     if (prefix === undefined) thisOptions.prefix = '';
-    if (typeof prefix === 'object' && !{}.hasOwnProperty.call(prefix, 'test')) {
-      const err = 'Prefix option must be a string or regular expression.';
-      throw new TypeError(err);
+    if (
+      typeof prefix === 'object' &&
+      !(prefix instanceof RegExp) &&
+      !(prefix instanceof Array)
+    ) {
+      throw new TypeError(
+        'Prefix option must be a string or regular expression or array.'
+      );
     }
     if (
       splitArgs !== undefined &&
