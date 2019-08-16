@@ -24,15 +24,18 @@ module.exports = class extends Event {
     let { content } = message;
     if (ignoreCase) content = content.toLowerCase();
     let prefixes = prefix;
-    let matched = prefix;
+    let matched = null;
     if (!(prefixes instanceof Array)) prefixes = [prefixes];
-    for (const prefix of prefixes) {
-      matched = prefix;
-      if (prefix instanceof RegExp) {
+    for (const _prefix of prefixes) {
+      if (matched) break;
+      if (typeof _prefix === 'string' && content.startsWith(_prefix)) {
+        matched = prefix;
+      } else if (prefix instanceof RegExp) {
         matched = content.match(prefix);
-        if (!matched) return;
+        if (matched) matched = matched[0];
       }
     }
+    if (!matched) return;
     if (typeof matched === 'string' && !content.startsWith(matched)) return;
     if (matched instanceof Array) matched = matched[0];
     let args = message.content.slice(matched.length);
