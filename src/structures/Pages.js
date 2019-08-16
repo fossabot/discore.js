@@ -30,11 +30,12 @@ module.exports = class Pages {
   }
 
   /**
-   * @param {*} msg Message to send.
+   * @param {...*} msgs Messages to send.
    * @returns {Pages}
    */
-  add(...args) {
-    return this.addPage(...args);
+  add(...msgs) {
+    msgs.forEach(e => this.addPage(e));
+    return this;
   }
 
   /**

@@ -322,9 +322,12 @@ const embed = new Embed()
   .setFooter('Page: 2');
 
 pages
+  // AddPage method adds only one page.
   .addPage('Hey! You are on the first page!')
+  // With add method you can add one page.
   .add(embed)
-  .add('`Third and the last page.`');
+  // Or tons of pages!
+  .add('`Third page.`', '`Fourth and the last page.`');
 
 const msg = await pages.send(message.channel);
 
