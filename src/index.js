@@ -8,5 +8,5 @@ module.exports = {
   Embed: require('./structures/Embed'),
   PermissionLevels: require('./structures/PermissionLevels'),
   Pages: require('./structures/Pages'),
-  MySQL: require('./structures/MySql'),
+  MySql: require('./structures/MySql'),
 };
