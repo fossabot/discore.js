@@ -19,6 +19,7 @@ module.exports = class SQLModel {
         tableOptions.push({ key, name: key, type: options[key] });
       }
     }
+    this.options = options;
     this.db.query(
       `IF NOT EXISTS (SELECT * FROM INFROMATION_SCHEMA.TABLES WHERE TABLE_NAME = '${
         this.name
@@ -102,8 +103,14 @@ module.exports = class SQLModel {
     if (!data._id) data._id = this.uniqid.gen();
     this.collection.set(data._id, data);
     const insertData = [];
-    for (const key in data) {
-      if ({}.hasOwnProperty.call(data, key)) {
+    const toInsert = { ...this.defaults, ...data };
+    const typeRegEx = /((^VARCHAR)|(^((TINY)|(LONG)|(MEDIUM))?TEXT))(\(.+\))?$/;
+    for (const key in toInsert) {
+      if ({}.hasOwnProperty.call(toInsert, key)) {
+        if (!toInsert[key]) toInsert[key] = 'NULL';
+        else if (new RegExp(typeRegEx.source, 'i').test(this.options[key])) {
+          toInsert[key] = `'${toInsert[key]}'`;
+        }
         insertData.push({ key, value: data[key], name: key });
       }
     }
@@ -191,8 +198,13 @@ module.exports = class SQLModel {
       _id: data._id.toHexString(),
     });
     const updateData = [];
+    const typeRegEx = /((^VARCHAR)|(^((TINY)|(LONG)|(MEDIUM))?TEXT))(\(.+\))?$/;
     for (const key in value) {
       if ({}.hasOwnProperty.call(value, key)) {
+        if (!value[key]) value[key] = 'NULL';
+        else if (new RegExp(typeRegEx.source, 'i').test(this.options[key])) {
+          value[key] = `'${value[key]}'`;
+        }
         updateData.push({ key, name: key, value: value[key] });
       }
     }
