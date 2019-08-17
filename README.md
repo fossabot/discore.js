@@ -630,8 +630,8 @@ Their structure:
 // Must define all default properties.
 // You can leave properties as undefined.
 const data = {
-  id: { type: String, default: undefined },
-  messageCount: { type: Number, default: 0 },
+  id: { type: 'VARCHAR(18)', default: undefined },
+  messageCount: { type: 'INT', default: 0 },
 };
 
 db.addModel('modelName', data);
