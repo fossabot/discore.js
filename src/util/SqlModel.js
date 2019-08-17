@@ -1,3 +1,4 @@
+const { EventEmitter } = require('events');
 const Collection = require('./Collection');
 const UniqueId = require('./UniqueId');
 
@@ -8,6 +9,7 @@ module.exports = class SQLModel {
       throw new TypeError(text);
     }
     name = name.toLowerCase();
+    this.emitter = new EventEmitter();
     this.db = db;
     this.uniqid = new UniqueId();
     this.defaults = defaults;
@@ -20,15 +22,30 @@ module.exports = class SQLModel {
       }
     }
     this.options = options;
-    this.db.query(
-      `IF NOT EXISTS (SELECT * FROM INFROMATION_SCHEMA.TABLES WHERE TABLE_NAME = '${
-        this.name
-      }') BEGIN CREATE TABLE ${this.name} (${tableOptions
-        .map(e => `${e.key} ${e.type}`)
-        .join(', ')}) END`
-    );
+    const tables = [];
+    this.db
+      .query('SHOW TABLES')
+      .on('result', doc => tables.push(doc[Object.keys(doc)[0]]))
+      .on(
+        'end',
+        () =>
+          new Promise((res, rej) => {
+            if (!tables.includes(this.name)) {
+              this.db
+                .query(
+                  `CREATE TABLE ${this.name} (${tableOptions
+                    .map(e => `${e.key} ${e.type}`)
+                    .join(', ')})`
+                )
+                .on('result', () => res(this.emitter.emit('connected', this)))
+                .on('error', err => rej(err));
+            } else {
+              res(this.emitter.emit('connected', this));
+            }
+          })
+      );
     this.collection = new Collection();
-    this._toCollection();
+    this.emitter.on('connected', () => this._toCollection());
   }
 
   /**
