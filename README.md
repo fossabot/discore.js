@@ -437,9 +437,11 @@ const embed = new Embed()
 - `title`
 - `url`
 
-### Database
+## Databases
 
-DB's structure:
+### MongoDB
+
+Structure:
 
 ```js
 const { Core, DB } = require('discore.js');
@@ -447,6 +449,157 @@ const { Core, DB } = require('discore.js');
 const db = new DB('url', {
   /* Options */
 });
+
+new Core({
+  db,
+});
+```
+
+#### Events
+
+- `dbConnected`
+- `dbError`
+- `dbDisconnected`
+
+#### Methods
+
+- `addModel()`
+- `open()` ( Open connection )
+- `close()` ( Close connection )
+
+#### Properties
+
+- `collection`
+
+### DB Models
+
+Their structure:
+
+```js
+// Must define all default properties.
+// You can leave properties as undefined.
+const data = {
+  id: { type: String, default: undefined },
+  messageCount: { type: Number, default: 0 },
+};
+
+db.addModel('modelName', data);
+```
+
+#### Methods
+
+- `hasOne()`
+- `findOne()`
+- `insertOne()`
+- `deleteOne()`
+- `updateOne()`
+- `upsertOne()`
+
+##### hasOne()
+
+```js
+// Working with model from previus example.
+// You can use `db['modelName']`
+
+// Searches for document with `id` of '123'.
+let res1 = db.modelName.hasOne({ id: '123' });
+let res2 = db.modelName.hasOne('id', '123'); // Same.
+let res3 = db.modelName.hasOne(val => val.id === '123'); // Same.
+
+console.log(typeof res); // Returns true or false (Boolean).
+console.log(typeof res2); // Same.
+console.log(typeof res3); // Same.
+```
+
+##### findOne()
+
+```js
+// Working with model from previus example.
+// You can use `db['modelName']` or `db.modelName`
+
+// Searches for document with `id` of '123'.
+let res1 = db.modelName.findOne({ id: '123' });
+let res2 = db.modelName.findOne('id', '123'); // Same.
+let res3 = db.modelName.findOne(val => val.id === '123'); // Same.
+
+/*
+  Returns document. If there is no document
+  then you will getdefault settings which
+  were defined by yourself.
+
+  That means you can not get undefined or
+  null.
+*/
+console.log(typeof res);
+console.log(typeof res2); // Same.
+console.log(typeof res3); // Same.
+```
+
+##### insertOne()
+
+```js
+// **upsertOne() method is recommended to use!**
+db.modelName.insertOne({
+  id: '3213',
+  messageCount: 1, // If not defined, going to be 0.
+});
+```
+
+##### deleteOne()
+
+```js
+// returns null or document.
+db.modelName.deleteOne({ id: '3213' });
+
+/*
+  Does the same thing but returns null
+  because document is already deleted.
+*/
+db.modelName.deleteOne('id', '3212');
+
+// Same as previus example.
+db.modelName.deleteOne(val => val.id === '3212');
+```
+
+##### updateOne()
+
+```js
+// **upsertOne() method is recommended to use!**
+
+/*
+  All of these examples are going to search
+  for `id` of '3213' and update 
+*/
+db.modelName.updateOne({ id: '3213' }, { messageCount: 2 });
+db.modelName.updateOne('id', '3212', { messageCount: 2 });
+db.modelName.updateOne(val => val.id === '3212', { messageCount: 2 });
+```
+
+##### upsertOne()
+
+```js
+/*
+  upsertOne() method is trying to update
+  a document. If document is not exists then
+  is going to insert it.
+*/
+
+// All of these examples are going to search
+// for `id` of '3213' and update
+// messageCount to 2.
+db.modelName.upsertOne({ id: '3213' }, { messageCount: 2 });
+db.modelName.upsertOne('id', '3212', { messageCount: 2 });
+db.modelName.upsertOne(val => val.id === '3212', { messageCount: 2 });
+```
+
+### MySQL
+
+Structure:
+
+```js
+const { Core, MySql } = require('discore.js');
+
+const db = new MySql('url');
 
 new Core({
   db,
