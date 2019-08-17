@@ -169,7 +169,7 @@ module.exports = class SQLModel {
     if (!this.hasOne(query)) return null;
     const data = this.findOne(query);
     if (!data) return null;
-    this.collection.delete(data._id.toHexString());
+    this.collection.delete(data._id);
     return new Promise((res, rej) => {
       this.db
         .query(`DELETE FROM ${this.name} WHERE _id = '${data._id}'`)
@@ -209,10 +209,9 @@ module.exports = class SQLModel {
     }
     if (!this.hasOne(query)) return null;
     const data = this.findOne(query);
-    this.collection.set(data._id.toHexString(), {
+    this.collection.set(data._id, {
       ...data,
       ...value,
-      _id: data._id.toHexString(),
     });
     const updateData = [];
     const typeRegEx = /((^VARCHAR)|(^((TINY)|(LONG)|(MEDIUM))?TEXT))(\(.+\))?$/;
