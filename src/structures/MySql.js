@@ -75,6 +75,8 @@ module.exports = class MySql {
         options[key] = options[key].type;
       }
     }
+    options._id = 'VARCHAR(20)';
+    defaultOptions._id = undefined;
     this._models.push(name);
     this[name] = new Model(this.db, name, options, defaultOptions);
     return this;
