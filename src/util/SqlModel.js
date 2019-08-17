@@ -55,10 +55,12 @@ module.exports = class SQLModel {
   async getAll() {
     const col = new Collection();
     const data = new Promise((res, rej) => {
+      const docs = [];
       this.db
         .query(`SELECT * FROM ${this.name}`)
-        .on('result', doc => res(doc))
-        .on('error', err => rej(err));
+        .on('result', doc => docs.push(doc))
+        .on('error', err => rej(err))
+        .on('end', () => res(docs));
     });
     try {
       await data;
