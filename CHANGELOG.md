@@ -1,5 +1,19 @@
 # Change Log
 
+## [0.8.0] - dev
+
+### Added
+
+- MySql structure.
+- Data Types for DBs.
+- Mongo.Types property.
+
+### Changed
+
+- DB structure renamed to Mongo.
+
+### Fixed
+
 ## [0.7.0] - 2019-08-16
 
 ### Added
