@@ -1,12 +1,13 @@
 const { EventEmitter } = require('events');
 const mysql = require('mysql');
 const Model = require('../util/SqlModel');
+const Types = require('../util/Types');
 
 module.exports = class MySql {
   constructor(url) {
     // TODO: Options
     /**
-     * @name DB#_models
+     * @name MySql#_models
      * @type {Array<Model>}
      * @private
      */
@@ -32,7 +33,7 @@ module.exports = class MySql {
   open(url) {
     if (!url) url = this.url;
     if (typeof url !== 'string') {
-      throw new TypeError('DB uri must be a string.');
+      throw new TypeError('MySql uri must be a string.');
     }
     this.url = url;
     this.db = mysql.createConnection(this.url);
@@ -51,7 +52,7 @@ module.exports = class MySql {
   /**
    * @param {String} name
    * @param {Object} options
-   * @returns {DB} db
+   * @returns {MySql} db
    * @example db.addModel('modelname', {
    *  id: { type: String, default: undefined },
    *  messageCount: { type: Number, default: 0 },
@@ -71,8 +72,14 @@ module.exports = class MySql {
     const defaultOptions = {};
     for (const key in options) {
       if ({}.hasOwnProperty.call(options, key)) {
+        if (typeof options[key].type === 'function') {
+          options.type = options.type();
+        }
+        if (!options[key].type.db.includes('mysql')) {
+          throw new Error('Used no-sql data type for sql.');
+        }
         defaultOptions[key] = options[key].default;
-        options[key] = options[key].type;
+        options[key] = options[key].type.mySqlType;
       }
     }
     options._id = 'VARCHAR(20)';
@@ -80,5 +87,14 @@ module.exports = class MySql {
     this._models.push(name);
     this[name] = new Model(this.db, name, options, defaultOptions);
     return this;
+  }
+
+  static get Types() {
+    for (const key in Types) {
+      if ({}.hasOwnProperty.call(Types, key)) {
+        if (!Types[key].db.includes('mysql')) delete Types[key];
+      }
+    }
+    return Types;
   }
 };

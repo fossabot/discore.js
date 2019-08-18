@@ -15,7 +15,8 @@ module.exports = class Model {
       .slice(1)
       .toLowerCase()}`;
     this.collection = new Collection();
-    this.Schema = new mongoose.Schema(options);
+    this.options = options;
+    this.Schema = new mongoose.Schema(this.options);
     this.Model = mongoose.model(this._modelName, this.Schema, this.name);
     this._db = this.Model.db;
     this._db.on('connected', () => this._toCollection());

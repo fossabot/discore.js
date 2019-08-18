@@ -4,7 +4,7 @@ module.exports = {
   Command: require('./structures/Command'),
   Event: require('./structures/Event'),
   UniqueId: require('./util/UniqueId'),
-  DB: require('./structures/DB'),
+  Mongo: require('./structures/Mongo'),
   Embed: require('./structures/Embed'),
   PermissionLevels: require('./structures/PermissionLevels'),
   Pages: require('./structures/Pages'),

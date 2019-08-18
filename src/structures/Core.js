@@ -3,7 +3,7 @@ const path = require('path');
 const Store = require('./Store');
 const PermissionLevels = require('./PermissionLevels');
 const Collection = require('../util/Collection');
-const DB = require('./DB');
+const Mongo = require('./Mongo');
 const MySql = require('./MySql');
 const UniqueId = require('../util/UniqueId');
 const Config = require('./Config');
@@ -58,9 +58,9 @@ module.exports = class extends Client {
       db !== undefined &&
       db !== null &&
       (typeof db !== 'object' ||
-        (!(db instanceof DB) && !(db instanceof MySql)))
+        (!(db instanceof Mongo) && !(db instanceof MySql)))
     ) {
-      throw new Error('Db property must be instance of DB or MySql.');
+      throw new Error('Db property must be instance of Mongo or MySql.');
     }
     if (prefix === undefined) thisOptions.prefix = '';
     if (
@@ -109,7 +109,7 @@ module.exports = class extends Client {
     this.uniqid = new UniqueId();
 
     if (this.db) {
-      if (this.db instanceof DB && this.db.connection) {
+      if (this.db instanceof Mongo && this.db.connection) {
         this.db.connection.on('connected', () =>
           this.emit('dbConnected', this.db)
         );

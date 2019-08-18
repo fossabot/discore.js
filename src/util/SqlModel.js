@@ -15,12 +15,14 @@ module.exports = class SQLModel {
     this.defaults = defaults;
     this.name = name;
     const tableOptions = [];
-    options = { ...this.defaults, ...options };
+    let primary = null;
     for (const key in options) {
       if ({}.hasOwnProperty.call(options, key)) {
         tableOptions.push({ key, name: key, type: options[key] });
+        if (options[key].primary) primary = key;
       }
     }
+    if (primary) tableOptions.push(`PRIMARY KEY (${primary})`);
     this.options = options;
     const tables = [];
     this.db
@@ -54,16 +56,16 @@ module.exports = class SQLModel {
    */
   async getAll() {
     const col = new Collection();
-    const data = new Promise((res, rej) => {
-      const docs = [];
-      this.db
-        .query(`SELECT * FROM ${this.name}`)
-        .on('result', doc => docs.push(doc))
-        .on('error', err => rej(err))
-        .on('end', () => res(docs));
-    });
+    let data = [];
     try {
-      await data;
+      data = await new Promise((res, rej) => {
+        const docs = [];
+        this.db
+          .query(`SELECT * FROM ${this.name}`)
+          .on('result', doc => docs.push({ ...doc }))
+          .on('error', err => rej(err))
+          .on('end', () => res(docs));
+      });
     } catch (err) {
       throw new Error(err);
     }

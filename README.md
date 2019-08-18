@@ -444,9 +444,9 @@ const embed = new Embed()
 Structure:
 
 ```js
-const { Core, DB } = require('discore.js');
+const { Core, Mongo } = require('discore.js');
 
-const db = new DB('url', {
+const db = new Mongo('url', {
   /* Options */
 });
 
@@ -479,12 +479,24 @@ Their structure:
 // Must define all default properties.
 // You can leave properties as undefined.
 const data = {
-  id: { type: String, default: undefined },
-  messageCount: { type: Number, default: 0 },
+  id: { type: Mongo.Types.String, default: undefined },
+  messageCount: { type: Mongo.Types.Number, default: 0 },
 };
 
 db.addModel('modelName', data);
 ```
+
+### Types
+
+- `Number`
+- `Double`
+- `String`
+- `Object`
+- `Array`
+- `ObjectId`
+- `Boolean`
+- `Date`
+- `RegExp`
 
 #### Methods
 
@@ -630,12 +642,41 @@ Their structure:
 // Must define all default properties.
 // You can leave properties as undefined.
 const data = {
-  id: { type: 'VARCHAR(18)', default: undefined },
-  messageCount: { type: 'INT', default: 0 },
+  id: { type: MySql.Types.VarChar(18), default: undefined },
+  messageCount: { type: MySql.Types.Int, default: 0 },
+  rowId: {
+    type: MySql.Types.Int(null, 'NOT NULL', 'AUTO_INCREMENT', 'PRIMARY'),
+    default: 0,
+  },
 };
 
 db.addModel('modelName', data);
 ```
+
+### Types
+
+- `Double`
+- `Boolean`
+- `Date`
+- `VarChar`
+- `TinyText`
+- `Text`
+- `Blob`
+- `MediumText`
+- `LongText`
+- `LongBlob`
+- `TinyInt`
+- `SmallInt`
+- `MediumInt`
+- `Int`
+- `BigInt`
+- `Float`
+- `Decimal`
+- `DateTime`
+- `Timestamp`
+- `Time`
+- `Enum`
+- `Set`
 
 #### Methods
 
