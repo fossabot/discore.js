@@ -100,7 +100,7 @@ module.exports = class Mongo {
   static get Types() {
     for (const key in Types) {
       if ({}.hasOwnProperty.call(Types, key)) {
-        if (!Types[key].db.includes('mongo')) delete Types[key];
+        if (!Types[key]().db.includes('mongo')) delete Types[key];
       }
     }
     return Types;

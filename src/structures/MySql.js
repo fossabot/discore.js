@@ -92,7 +92,7 @@ module.exports = class MySql {
   static get Types() {
     for (const key in Types) {
       if ({}.hasOwnProperty.call(Types, key)) {
-        if (!Types[key].db.includes('mysql')) delete Types[key];
+        if (!Types[key]().db.includes('mysql')) delete Types[key];
       }
     }
     return Types;
