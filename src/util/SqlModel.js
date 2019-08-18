@@ -24,28 +24,16 @@ module.exports = class SQLModel {
     }
     if (primary) tableOptions.push(`PRIMARY KEY (${primary})`);
     this.options = options;
-    const tables = [];
-    this.db
-      .query('SHOW TABLES')
-      .on('result', doc => tables.push(doc[Object.keys(doc)[0]]))
-      .on(
-        'end',
-        () =>
-          new Promise((res, rej) => {
-            if (!tables.includes(this.name)) {
-              this.db
-                .query(
-                  `CREATE TABLE ${this.name} (${tableOptions
-                    .map(e => `${e.key} ${e.type}`)
-                    .join(', ')})`
-                )
-                .on('result', () => res(this.emitter.emit('connected', this)))
-                .on('error', err => rej(err));
-            } else {
-              res(this.emitter.emit('connected', this));
-            }
-          })
-      );
+    new Promise((res, rej) => {
+      this.db
+        .query(
+          `CREATE TABLE IF NOT EXISTS ${this.name} (${tableOptions
+            .map(e => `${e.key} ${e.type}`)
+            .join(', ')})`
+        )
+        .on('error', err => rej(err))
+        .on('end', () => res(this.emitter.emit('connected', this)));
+    });
     this.collection = new Collection();
     this.emitter.on('connected', () => this._toCollection());
   }
