@@ -1,7 +1,8 @@
 const Collection = require('../util/Collection');
 
 module.exports = class PermissionLevels {
-  constructor() {
+  constructor(client) {
+    this.client = client;
     /**
      * @name PermissionLevels#_id
      * @type {Number}

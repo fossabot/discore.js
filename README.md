@@ -305,6 +305,10 @@ Their structure:
 const { Core, PermissionLevels } = require('discore.js');
 const config = require('./config');
 
+/*
+  You can define client as first argument
+  if you want to use this.client when adding levels.
+*/
 const permLevels = new PermissionLevels();
 permLevels
   .add(0, true, msg => msg.author.id === '1') // Throws error.
