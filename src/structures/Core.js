@@ -3,7 +3,8 @@ const path = require('path');
 const Store = require('./Store');
 const PermissionLevels = require('./PermissionLevels');
 const Collection = require('../util/Collection');
-const DB = require('./DB');
+const Mongo = require('./Mongo');
+const MySql = require('./MySql');
 const UniqueId = require('../util/UniqueId');
 const Config = require('./Config');
 
@@ -56,10 +57,10 @@ module.exports = class extends Client {
     if (
       db !== undefined &&
       db !== null &&
-      (typeof db !== 'object' || !(db instanceof DB))
+      (typeof db !== 'object' ||
+        (!(db instanceof Mongo) && !(db instanceof MySql)))
     ) {
-      const err = 'Db property must be instance of DB.';
-      throw new Error(err);
+      throw new Error('Db property must be instance of Mongo or MySql.');
     }
     if (prefix === undefined) thisOptions.prefix = '';
     if (
@@ -107,14 +108,24 @@ module.exports = class extends Client {
     this.db = thisOptions.db;
     this.uniqid = new UniqueId();
 
-    if (this.db && this.db.connection) {
-      this.db.connection.on('connected', () =>
-        this.emit('dbConnected', this.db)
-      );
-      this.db.connection.on('err', err => this.emit('dbError', err));
-      this.db.connection.on('disconnected', () =>
-        this.emit('dbDisconnected', this.db)
-      );
+    if (this.db) {
+      if (this.db instanceof Mongo && this.db.connection) {
+        this.db.connection.on('connected', () =>
+          this.emit('dbConnected', this.db)
+        );
+        this.db.connection.on('err', err => this.emit('dbError', err));
+        this.db.connection.on('disconnected', () =>
+          this.emit('dbDisconnected', this.db)
+        );
+      } else if (this.db instanceof MySql) {
+        this.db.emitter.on('connected', () =>
+          this.emit('dbConnected', this.db)
+        );
+        this.db.emitter.on('error', err => this.emit('dbError', err));
+        this.db.emitter.on('disconnected', () =>
+          this.emit('dbDisconnected', this.db)
+        );
+      }
     }
 
     new Store(this, 'event', path.join(__dirname, '../events'));

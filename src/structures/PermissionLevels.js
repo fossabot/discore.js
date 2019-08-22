@@ -45,16 +45,16 @@ module.exports = class PermissionLevels {
     return this;
   }
 
-  async _test(level, message) {
+  async _test(level, message, client) {
     while (!this._collection.has(level)) {
       if (!this._collection.find(e => e.level > level)) return false;
       level += 1;
     }
     const { brk, fn } = this._collection.get(level);
-    let res = fn(message);
+    let res = fn(message, client);
     if (fn.constructor.name === 'AsyncFunction') res = await res;
     if (res) return res;
-    if (!brk) return this._test(level + 1, message);
+    if (!brk) return this._test(level + 1, message, client);
     return false;
   }
 
@@ -65,13 +65,13 @@ module.exports = class PermissionLevels {
    * @returns {Boolean}
    * @example permLvls.test(3, message);
    */
-  async test(level, message) {
+  async test(level, message, client) {
     if (!this._collection.has(level)) return false;
     const { brk, fn } = this._collection.get(level);
-    let res = fn(message);
+    let res = fn(message, client);
     if (fn.constructor.name === 'AsyncFunction') res = await res;
     if (res) return res;
-    if (!brk) return this._test(level + 1, message);
+    if (!brk) return this._test(level + 1, message, client);
     return this.test();
   }
 

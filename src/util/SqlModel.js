@@ -1,25 +1,41 @@
-const mongoose = require('mongoose');
+const { EventEmitter } = require('events');
 const Collection = require('./Collection');
+const UniqueId = require('./UniqueId');
 
-module.exports = class Model {
-  constructor(name, options = {}, defaults = {}) {
+module.exports = class SQLModel {
+  constructor(db, name, options = {}, defaults = {}) {
     if (typeof name !== 'string') {
       const text = `First argument must be a string. Instead got ${typeof name}`;
       throw new TypeError(text);
     }
     name = name.toLowerCase();
-
+    this.emitter = new EventEmitter();
+    this.db = db;
+    this.uniqid = new UniqueId();
     this.defaults = defaults;
     this.name = name;
-    this._modelName = `${this.name.slice(0, 1).toUpperCase()}${this.name
-      .slice(1)
-      .toLowerCase()}`;
-    this.collection = new Collection();
+    const tableOptions = [];
+    let primary = null;
+    for (const key in options) {
+      if ({}.hasOwnProperty.call(options, key)) {
+        tableOptions.push({ key, name: key, type: options[key] });
+        if (options[key].primary) primary = key;
+      }
+    }
+    if (primary) tableOptions.push(`PRIMARY KEY (${primary})`);
     this.options = options;
-    this.Schema = new mongoose.Schema(this.options);
-    this.Model = mongoose.model(this._modelName, this.Schema, this.name);
-    this._db = this.Model.db;
-    this._db.on('connected', () => this._toCollection());
+    new Promise((res, rej) => {
+      this.db
+        .query(
+          `CREATE TABLE IF NOT EXISTS ${this.name} (${tableOptions
+            .map(e => `${e.key} ${e.type}`)
+            .join(', ')})`
+        )
+        .on('error', err => rej(err))
+        .on('end', () => res(this.emitter.emit('connected', this)));
+    });
+    this.collection = new Collection();
+    this.emitter.on('connected', () => this._toCollection());
   }
 
   /**
@@ -28,13 +44,22 @@ module.exports = class Model {
    */
   async getAll() {
     const col = new Collection();
-    const data = await this.Model.find({});
+    let data = [];
+    try {
+      data = await new Promise((res, rej) => {
+        const docs = [];
+        this.db
+          .query(`SELECT * FROM ${this.name}`)
+          .on('result', doc => docs.push({ ...doc }))
+          .on('error', err => rej(err))
+          .on('end', () => res(docs));
+      });
+    } catch (err) {
+      throw new Error(err);
+    }
     if (!data) return col;
     for (const val of data) {
-      col.set(val._id.toHexString(), {
-        ...val._doc,
-        _id: val._id.toHexString(),
-      });
+      col.set(val._id, val);
     }
     return col;
   }
@@ -68,9 +93,7 @@ module.exports = class Model {
    */
   findOne(query, value) {
     const data = this.collection.find(query, value);
-    if (data && data._id) {
-      data._id = new mongoose.mongo.ObjectID(data._id);
-    }
+    if (data && data._id) data._id = data._id;
     return data ? { ...this.defaults, ...data } : this.defaults;
   }
 
@@ -80,19 +103,38 @@ module.exports = class Model {
    * @example model.insertOne({ id: '1' });
    * @async
    */
-  async insertOne(data) {
+  insertOne(data) {
     if (typeof data !== 'object') {
       const text = `First argument must be an object. Instead got ${typeof data}`;
       throw new TypeError(text);
     }
     data = { ...this.defaults, ...data };
-    if (!data._id) data._id = new mongoose.mongo.ObjectID();
-    this.collection.set(data._id.toHexString(), {
-      ...data,
-      _id: data._id.toHexString(),
+    if (!data._id) data._id = this.uniqid.gen();
+    this.collection.set(data._id, data);
+    const insertData = [];
+    const toInsert = { ...this.defaults, ...data };
+    const typeRegEx = /((^VARCHAR)|(^((TINY)|(LONG)|(MEDIUM))?TEXT))(\(.+\))?$/;
+    for (const key in toInsert) {
+      if ({}.hasOwnProperty.call(toInsert, key)) {
+        if (!toInsert[key]) toInsert[key] = 'NULL';
+        else if (new RegExp(typeRegEx.source, 'i').test(this.options[key])) {
+          toInsert[key] = `'${toInsert[key]}'`;
+        }
+        insertData.push({ key, value: data[key], name: key });
+      }
+    }
+    return new Promise((res, rej) => {
+      this.db
+        .query(
+          `INSERT INTO ${this.name} (${insertData
+            .map(e => `\`${e.key}\``)
+            .join(', ')}) VALUES (${insertData
+            .map(e => `'${e.value}'`)
+            .join(', ')})`
+        )
+        .on('error', err => rej(err))
+        .on('result', () => res(data));
     });
-    await this._db.collection(this.name).insertOne(data);
-    return data;
   }
 
   /**
@@ -102,7 +144,7 @@ module.exports = class Model {
    * @example model.deleteOne({ id: '1' });
    * @async
    */
-  async deleteOne(query, value) {
+  deleteOne(query, value) {
     if (typeof query === 'string') {
       if (typeof value === 'undefined') {
         const text = 'Value must be specified.';
@@ -119,9 +161,13 @@ module.exports = class Model {
     if (!this.hasOne(query)) return null;
     const data = this.findOne(query);
     if (!data) return null;
-    this.collection.delete(data._id.toHexString());
-    await this._db.collection(this.name).findOneAndDelete({ _id: data._id });
-    return data;
+    this.collection.delete(data._id);
+    return new Promise((res, rej) => {
+      this.db
+        .query(`DELETE FROM ${this.name} WHERE _id = '${data._id}'`)
+        .on('result', () => res(data))
+        .on('error', err => rej(err));
+    });
   }
 
   /**
@@ -134,7 +180,7 @@ module.exports = class Model {
    * @example model.updateOne('id', '1', { id: '2' });
    * @async
    */
-  async updateOne(query, value, newData) {
+  updateOne(query, value, newData) {
     if (typeof query === 'string') {
       if (typeof value === 'undefined') {
         const text = 'Value must be specified.';
@@ -155,15 +201,31 @@ module.exports = class Model {
     }
     if (!this.hasOne(query)) return null;
     const data = this.findOne(query);
-    this.collection.set(data._id.toHexString(), {
+    this.collection.set(data._id, {
       ...data,
       ...value,
-      _id: data._id.toHexString(),
     });
-    await this._db
-      .collection(this.name)
-      .findOneAndUpdate({ _id: data._id }, { $set: value });
-    return data;
+    const updateData = [];
+    const typeRegEx = /((^VARCHAR)|(^((TINY)|(LONG)|(MEDIUM))?TEXT))(\(.+\))?$/;
+    for (const key in value) {
+      if ({}.hasOwnProperty.call(value, key)) {
+        if (!value[key]) value[key] = 'NULL';
+        else if (new RegExp(typeRegEx.source, 'i').test(this.options[key])) {
+          value[key] = `'${value[key]}'`;
+        }
+        updateData.push({ key, name: key, value: value[key] });
+      }
+    }
+    return new Promise((res, rej) => {
+      this.db
+        .query(
+          `UPDATE ${this.name} SET ${updateData
+            .map(e => `${e.key} = ${e.value}`)
+            .join(', ')} WHERE _id = '${data._id}'`
+        )
+        .on('result', () => res(data))
+        .on('error', err => rej(err));
+    });
   }
 
   /**

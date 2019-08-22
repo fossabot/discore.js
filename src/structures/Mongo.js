@@ -1,10 +1,11 @@
 const mongoose = require('mongoose');
 const Model = require('../util/Model');
+const Types = require('../util/Types');
 
-module.exports = class DB {
+module.exports = class Mongo {
   constructor(url, options = {}) {
     /**
-     * @name DB#_models
+     * @name Mongo#_models
      * @type {Array<Model>}
      * @private
      */
@@ -50,7 +51,7 @@ module.exports = class DB {
   open(url, options = {}) {
     if (!url) url = this.url;
     if (typeof url !== 'string') {
-      throw new TypeError('DB uri must be a string.');
+      throw new TypeError('Mongo uri must be a string.');
     }
     this.url = url;
     return this.connection.openUri(url, { ...this.defaultOptions, ...options });
@@ -59,7 +60,7 @@ module.exports = class DB {
   /**
    * @param {String} name
    * @param {Object} options
-   * @returns {DB} db
+   * @returns {Mongo} db
    * @example db.addModel('modelname', {
    *  id: { type: String, default: undefined },
    *  messageCount: { type: Number, default: 0 },
@@ -81,12 +82,27 @@ module.exports = class DB {
     const defaultOptions = {};
     for (const key in options) {
       if ({}.hasOwnProperty.call(options, key)) {
+        if (typeof options[key].type === 'function') {
+          options.type = options.type();
+        }
+        if (!options[key].type.db.includes('mongo')) {
+          throw new Error('Used sql data type for no-sql.');
+        }
         defaultOptions[key] = options[key].default;
-        options[key] = options[key].type;
+        options[key] = options[key].type.mongoType;
       }
     }
     this._models.push(name);
     this[name] = new Model(name.toLowerCase(), options, defaultOptions);
     return this;
+  }
+
+  static get Types() {
+    for (const key in Types) {
+      if ({}.hasOwnProperty.call(Types, key)) {
+        if (!Types[key]().db.includes('mongo')) delete Types[key];
+      }
+    }
+    return Types;
   }
 };
