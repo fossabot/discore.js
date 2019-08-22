@@ -6,11 +6,13 @@
 
 - MySql structure.
 - Data Types for DBs.
-- Mongo.Types property.
+- Mongo#Types property.
 
 ### Changed
 
 - DB structure renamed to Mongo.
+- Client variable should be defined in PermissionLevels#test method if it is needed.
+- You can use client argument in PermissionLevels#add method.
 
 ### Fixed
 
