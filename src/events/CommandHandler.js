@@ -54,7 +54,8 @@ module.exports = class extends Event {
     if (!command) return;
     const permTest = await this.client.permLevels.test(
       command.permLevel,
-      message
+      message,
+      this.client
     );
     if (!permTest) return command.noPermsRun(message, args);
     if (command.cooldowns.get(message.author.id) > Date.now()) return;

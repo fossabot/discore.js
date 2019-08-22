@@ -305,23 +305,24 @@ Their structure:
 const { Core, PermissionLevels } = require('discore.js');
 const config = require('./config');
 
-/*
-  You can define client as first argument
-  if you want to use this.client when adding levels.
-*/
 const permLevels = new PermissionLevels();
 permLevels
   .add(0, true, msg => msg.author.id === '1') // Throws error.
   // Permissions Level 1 is true only if message author id is '1'
   .add(1, false, msg => msg.author.id === '1')
   // Same as previus example
-  .addLevel(2, false, msg => msg.author.id === '1');
+  .addLevel(2, false, (msg, client) => {
+    return msg.author.id === client.user.id;
+  });
 
 // Test for a role.
 permLevels.add(3, true, msg => msg.member.roles.has('roleid'));
 
 // Testing. Returns boolean.
 permLevels.test(3, msg);
+
+// You can define client as third argument if needed.
+permLevels.test(2, msg, this.client);
 
 new Core(config);
 ```
